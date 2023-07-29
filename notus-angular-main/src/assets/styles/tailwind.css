@@ -2638,6 +2638,9 @@ select {
 .p-16 {
   padding: 4rem;
 }
+.p-40 {
+    padding: 10rem;
+}
 
 .px-0 {
   padding-left: 0px;
@@ -2693,7 +2696,10 @@ select {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
-
+.px-40 {
+    padding-left: 10rem;
+    padding-right: 10rem;
+}
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;

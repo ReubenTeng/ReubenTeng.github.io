@@ -44,10 +44,9 @@ const routes: Routes = [
     ],
   },
   // no layout views
-  { path: "profile", component: ProfileComponent },
-  //   { path: "landing", component: LandingComponent },
+  { path: "sandbox", component: LandingComponent },
   { path: "", component: ProfileComponent },
-  //   { path: "", component: IndexComponent },
+  { path: "photos", component: IndexComponent },
   //   { path: "**", redirectTo: "", pathMatch: "full" },
 ];
 

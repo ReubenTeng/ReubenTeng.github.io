@@ -1,0 +1,44 @@
+<div style="min-width: 480px; min-height: 320px">
+  <div class="gravity-box">
+    <div
+      class="number"
+      *ngFor="let box of getBoxes()"
+      [ngStyle]="{
+        left: box.XPos + 'px',
+        top: box.YPos + 'px',
+        userSelect: 'none'
+      }"
+      (click)="onClickBox(box.number)"
+    >
+      {{ box.number }}
+    </div>
+  </div>
+  <div *ngIf="year != ''">Your birth year is {{ year }}.</div>
+  <span>
+    <button
+      mat-raised-button
+      color="primary"
+      style="margin: 8px; margin-left: 0px"
+      [disabled]="year.length < 4"
+      (click)="close()"
+    >
+      Submit
+    </button>
+  </span>
+  <span>
+    <button
+      mat-raised-button
+      color="warn"
+      style="margin: 8px"
+      [disabled]="year.length === 0"
+      (click)="onClickDelete()"
+    >
+      Delete
+    </button>
+  </span>
+  <span *ngIf="year.length >= 1">
+    <button mat-raised-button style="margin: 8px" (click)="onClickSlowDown()">
+      Slow down
+    </button>
+  </span>
+</div>

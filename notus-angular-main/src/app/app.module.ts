@@ -47,6 +47,14 @@ import { PagesDropdownComponent } from "./components/dropdowns/pages-dropdown/pa
 import { NotificationDropdownComponent } from "./components/dropdowns/notification-dropdown/notification-dropdown.component";
 import { SidebarComponent } from "./components/sidebar/sidebar.component";
 import { UserDropdownComponent } from "./components/dropdowns/user-dropdown/user-dropdown.component";
+import { AgeCheckComponent } from "./views/landing/age-check/age-check.component";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
+import { ImagePanelComponent } from "./views/index/image-panel/image-panel.component";
+import { PlusMinusComponent } from "./views/landing/age-check/plus-minus/plus-minus.component";
+import { ClicksComponent } from "./views/landing/age-check/clicks/clicks.component";
+import { FormsModule } from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -84,8 +92,19 @@ import { UserDropdownComponent } from "./components/dropdowns/user-dropdown/user
     IndexComponent,
     LandingComponent,
     ProfileComponent,
+    AgeCheckComponent,
+    ImagePanelComponent,
+    PlusMinusComponent,
+    ClicksComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    NoopAnimationsModule,
+    MatButtonModule,
+    MatDialogModule,
+    FormsModule,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
