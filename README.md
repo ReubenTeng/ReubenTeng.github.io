@@ -1,10 +1,10 @@
 # Chaotic Cloud Albums (React + GitHub Pages)
 
-This repository now runs a React/Vite app designed as:
+This repository runs a React/Vite app with:
 
 - A playful "bad UX sandbox" inspired by absurd controls.
-- A photo-hosting style UI that reads your personal OneDrive folders as albums.
-- Nested OneDrive folders as nested albums.
+- A photo-hosting UI that reads from **your own OneDrive folder share link**.
+- Nested OneDrive folders rendered as nested albums.
 - Click any photo to open full resolution in a new tab.
 
 ## Quick start
@@ -14,26 +14,20 @@ npm install
 npm run dev
 ```
 
-## OneDrive setup
+## Use your own OneDrive (owner-controlled, not visitor-controlled)
 
-1. Create an app registration in Azure Portal.
-2. Add a SPA redirect URI for your local and GitHub Pages URLs.
-3. Grant delegated Microsoft Graph permissions:
-   - `User.Read`
-   - `Files.Read`
-   - `Files.Read.All` (for broader access patterns)
+1. In your OneDrive, choose the root folder you want to publish as albums.
+2. Create a share link for that folder.
+3. Ensure link permissions allow anonymous/read access if you want GitHub Pages visitors to browse without auth.
 4. Create `.env`:
 
 ```bash
-VITE_AZURE_CLIENT_ID=your-client-id
-VITE_REDIRECT_URI=http://localhost:5173
+VITE_ONEDRIVE_SHARE_URL="https://1drv.ms/f/s!your-share-link"
 ```
 
-For GitHub Pages, set `VITE_REDIRECT_URI` to your deployed URL.
+The app resolves this single owner share link through Microsoft Graph `/shares/...` endpoints and never asks site visitors to sign in.
 
 ## Deploy to GitHub Pages
-
-The project uses `gh-pages` and Vite build output:
 
 ```bash
 npm run deploy

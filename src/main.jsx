@@ -1,22 +1,21 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { PublicClientApplication } from "@azure/msal-browser";
 import "./styles.css";
 
-const graphScopes = ["User.Read", "Files.Read", "Files.Read.All"];
+const ONEDRIVE_SHARE_URL = import.meta.env.VITE_ONEDRIVE_SHARE_URL || "";
 
-const msalConfig = {
-  auth: {
-    clientId: import.meta.env.VITE_AZURE_CLIENT_ID || "",
-    authority: "https://login.microsoftonline.com/common",
-    redirectUri: import.meta.env.VITE_REDIRECT_URI || window.location.origin,
-  },
-  cache: {
-    cacheLocation: "localStorage",
-  },
-};
+function toShareToken(url) {
+  const base64 = btoa(url).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return `u!${base64}`;
+}
 
-const msalInstance = new PublicClientApplication(msalConfig);
+async function graphGet(path) {
+  const response = await fetch(`https://graph.microsoft.com/v1.0${path}`);
+  if (!response.ok) {
+    throw new Error(`Graph request failed: ${response.status}`);
+  }
+  return response.json();
+}
 
 function WeirdVolumeSandbox() {
   const [volume, setVolume] = React.useState(42);
@@ -44,101 +43,71 @@ function WeirdVolumeSandbox() {
 }
 
 function App() {
-  const [account, setAccount] = React.useState(null);
   const [tree, setTree] = React.useState(null);
-  const [selectedFolderId, setSelectedFolderId] = React.useState("root");
+  const [selectedFolderId, setSelectedFolderId] = React.useState("");
   const [images, setImages] = React.useState([]);
-  const [status, setStatus] = React.useState("Sign in to browse your OneDrive albums.");
+  const [status, setStatus] = React.useState("Loading your shared OneDrive album...");
+  const [shareContext, setShareContext] = React.useState(null);
 
-  React.useEffect(() => {
-    msalInstance.initialize().then(() => {
-      const existing = msalInstance.getAllAccounts()[0];
-      if (existing) {
-        setAccount(existing);
-        loadTree(existing);
-      }
-    });
-  }, []);
-
-  async function authHeader(activeAccount) {
-    const response = await msalInstance.acquireTokenSilent({
-      account: activeAccount,
-      scopes: graphScopes,
-    });
-
-    return { Authorization: `Bearer ${response.accessToken}` };
+  async function listFolderChildren(itemId, driveId) {
+    return graphGet(
+      `/drives/${driveId}/items/${itemId}/children?$select=id,name,folder,image,webUrl,@microsoft.graph.downloadUrl`,
+    );
   }
 
-  async function graphGet(path, activeAccount) {
-    const headers = await authHeader(activeAccount);
-    const response = await fetch(`https://graph.microsoft.com/v1.0${path}`, { headers });
-    if (!response.ok) {
-      throw new Error(`Graph request failed: ${response.status}`);
-    }
-    return response.json();
-  }
-
-  async function buildFolderTree(folderId, activeAccount) {
-    const path =
-      folderId === "root"
-        ? "/me/drive/root/children?$select=id,name,folder,file,image,webUrl,@microsoft.graph.downloadUrl"
-        : `/me/drive/items/${folderId}/children?$select=id,name,folder,file,image,webUrl,@microsoft.graph.downloadUrl`;
-
-    const data = await graphGet(path, activeAccount);
+  async function buildFolderTree(itemId, driveId) {
+    const data = await listFolderChildren(itemId, driveId);
     const folders = (data.value || []).filter((item) => item.folder);
 
     const children = await Promise.all(
       folders.map(async (folder) => ({
         id: folder.id,
         name: folder.name,
-        children: await buildFolderTree(folder.id, activeAccount),
+        children: await buildFolderTree(folder.id, driveId),
       })),
     );
 
     return children;
   }
 
-  async function listImages(folderId, activeAccount) {
-    const path =
-      folderId === "root"
-        ? "/me/drive/root/children?$select=id,name,image,file,webUrl,@microsoft.graph.downloadUrl"
-        : `/me/drive/items/${folderId}/children?$select=id,name,image,file,webUrl,@microsoft.graph.downloadUrl`;
-    const data = await graphGet(path, activeAccount);
-
-    const folderImages = (data.value || []).filter((item) => item.image);
-    setImages(folderImages);
+  async function loadImages(itemId, driveId) {
+    const data = await listFolderChildren(itemId, driveId);
+    setImages((data.value || []).filter((item) => item.image));
   }
 
-  async function loadTree(activeAccount) {
-    setStatus("Loading albums from OneDrive...");
-    try {
-      const children = await buildFolderTree("root", activeAccount);
-      setTree({ id: "root", name: "📁 Root", children });
-      await listImages("root", activeAccount);
-      setStatus("Connected. Pick an album from the left!");
-    } catch (error) {
-      console.error(error);
-      setStatus(
-        "Could not load OneDrive. Check VITE_AZURE_CLIENT_ID and Graph API permissions (Files.Read).",
-      );
-    }
-  }
+  React.useEffect(() => {
+    async function loadSharedDrive() {
+      if (!ONEDRIVE_SHARE_URL) {
+        setStatus("Set VITE_ONEDRIVE_SHARE_URL to a share link from your own OneDrive folder.");
+        return;
+      }
 
-  async function signIn() {
-    if (!msalConfig.auth.clientId) {
-      setStatus("Set VITE_AZURE_CLIENT_ID in a .env file before signing in.");
-      return;
+      try {
+        const token = toShareToken(ONEDRIVE_SHARE_URL);
+        const shareRoot = await graphGet(`/shares/${token}/driveItem?$expand=children`);
+        const driveId = shareRoot?.parentReference?.driveId;
+        const rootItemId = shareRoot?.id;
+
+        if (!driveId || !rootItemId) {
+          throw new Error("Share metadata missing drive information.");
+        }
+
+        setShareContext({ driveId, rootItemId });
+        const children = await buildFolderTree(rootItemId, driveId);
+        setTree({ id: rootItemId, name: `📁 ${shareRoot.name}`, children });
+        setSelectedFolderId(rootItemId);
+        await loadImages(rootItemId, driveId);
+        setStatus("Showing your shared OneDrive albums.");
+      } catch (error) {
+        console.error(error);
+        setStatus(
+          "Could not read the shared OneDrive folder. Make sure the link is public/anyone-with-link and points to a folder.",
+        );
+      }
     }
 
-    try {
-      const login = await msalInstance.loginPopup({ scopes: graphScopes });
-      setAccount(login.account);
-      await loadTree(login.account);
-    } catch (error) {
-      console.error(error);
-      setStatus("Sign in failed. See console for details.");
-    }
-  }
+    loadSharedDrive();
+  }, []);
 
   function FolderNode({ node }) {
     const [open, setOpen] = React.useState(false);
@@ -149,8 +118,8 @@ function App() {
           className={`folder-btn ${selectedFolderId === node.id ? "active" : ""}`}
           onClick={async () => {
             setSelectedFolderId(node.id);
-            if (account) {
-              await listImages(node.id, account);
+            if (shareContext) {
+              await loadImages(node.id, shareContext.driveId);
             }
           }}
         >
@@ -185,10 +154,8 @@ function App() {
       <header>
         <h1>Chaotic Cloud Albums 📸☁️</h1>
         <p>
-          A React + GitHub Pages photo host that treats each OneDrive folder as an album (including
-          nested albums).
+          This site now reads from your own OneDrive share link (not from each visitor's account).
         </p>
-        <button onClick={signIn}>{account ? `Signed in as ${account.username}` : "Sign in"}</button>
         <p className="status">{status}</p>
       </header>
 
@@ -197,7 +164,7 @@ function App() {
       <section className="gallery-layout">
         <aside>
           <h3>Albums</h3>
-          {tree ? <FolderNode node={tree} /> : <p>Sign in to load albums.</p>}
+          {tree ? <FolderNode node={tree} /> : <p>Waiting for OneDrive folder configuration.</p>}
         </aside>
 
         <section className="images">
