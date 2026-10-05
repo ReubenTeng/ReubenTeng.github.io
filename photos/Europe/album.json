@@ -1,0 +1,15 @@
+{
+  "title": "Europe",
+  "description": "Long afternoons, passing trains, and the art of getting a little lost.",
+  "color": "#8b9475",
+  "cover": "musee.jpg",
+  "order": ["musee.jpg", "outside_musee.jpg", "paris_train.jpg", "driving_close.jpg", "open_arms.JPG", "sunset_beach.JPG"],
+  "photos": {
+    "musee.jpg": { "title": "At the museum", "alt": "An ornate vaulted museum hall beneath a large arched glass roof." },
+    "outside_musee.jpg": { "title": "Outside the museum", "alt": "Pedestrians beside warm stone buildings on a sunlit Paris street." },
+    "paris_train.jpg": { "title": "A passing moment", "alt": "Passengers seen between seats inside a train carriage in green-toned light." },
+    "driving_close.jpg": { "title": "On the road", "alt": "The silhouette of a passenger against a bright, blurred view through a vehicle window." },
+    "open_arms.JPG": { "title": "Open arms", "alt": "A small figure with outstretched arms in a vast snowy landscape at sunset." },
+    "sunset_beach.JPG": { "title": "The last light", "alt": "The sun setting over a dark beach, with waves, cliffs, and distant sea stacks." }
+  }
+}
