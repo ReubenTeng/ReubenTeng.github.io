@@ -1,0 +1,29 @@
+{
+    "title": "Europe",
+    "description": "Long afternoons, passing trains, and the art of getting a little lost.",
+    "color": "#8b9475",
+    "cover": "DSCF5547.jpg",
+
+    "photos": {
+        "DSCF5425.jpg": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSCF5491.jpg": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSCF5538.jpg": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSCF5547.jpg": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSCF5573.jpg": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        }
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "title": "Singapore Air Show 2026",
+    "description": "My first Air Show - shot on a Nikon Z6III + Tamron 150-600mm G2.",
+    "color": "#a29272",
+    "cover": "DSC_4392.png",
+    "photos": {
+        "DSC_2163.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_3318.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_3598.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_3726.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_3774.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_3952.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_4392.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_4790.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        },
+        "DSC_4952.png": {
+            "title": "Lorem Ipsum",
+            "alt": ""
+        }
+    }
+}
