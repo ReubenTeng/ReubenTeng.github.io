@@ -5,40 +5,54 @@
     "cover": "DSC_4392.png",
     "photos": {
         "DSC_2163.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Lines in the sky",
+            "caption": "Red wings and parallel smoke trails, drawn across a blue sky.",
+            "alt": "Red-and-white propeller aircraft flying in formation overhead, leaving parallel white smoke trails."
         },
         "DSC_3318.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "In sync",
+            "caption": "Two aircraft, one rhythm.",
+            "alt": "Two red aerobatic aircraft flying parallel against a clear blue sky, each trailing white smoke."
+        },
+        "DSC_3362.png": {
+            "title": "Cloud company",
+            "caption": "A little blue, a little cloud, and a perfectly matched pair.",
+            "alt": "Two red propeller aircraft flying one above the other beside soft white clouds in a vertical composition."
         },
         "DSC_3598.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "On the ground",
+            "caption": "A quieter detail between the flying displays.",
+            "alt": "A grey aircraft tail marked 8319, with a black bird emblem and a chequered tip, against sunlit clouds."
         },
         "DSC_3726.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Four of a kind",
+            "caption": "A formation of four, threading smoke through the clouds.",
+            "alt": "Four red-and-yellow helicopters flying in a staggered formation with white smoke trailing behind."
         },
         "DSC_3774.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Side by side",
+            "caption": "Close company, a long way above the ground.",
+            "alt": "Two red-and-yellow display helicopters flying closely side by side, leaving white smoke trails."
         },
         "DSC_3952.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Banking into blue",
+            "caption": "One turn, caught against the open sky.",
+            "alt": "A grey fighter jet banking against a pale blue sky, its underside and swept wings visible."
         },
         "DSC_4392.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Arcs in the blue",
+            "caption": "White trails unfurl beneath a helicopter, briefly drawing on the sky.",
+            "alt": "A dark helicopter above a fan of curling white smoke trails against blue sky and scattered clouds."
         },
         "DSC_4790.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Shared airspace",
+            "caption": "Rotors, wings, and a ribbon of blue smoke in the same frame.",
+            "alt": "A military helicopter and a fighter jet together in the frame, with pale blue smoke trailing to the lower right."
         },
         "DSC_4952.png": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Rotor rhythm",
+            "caption": "A close look at the machine behind the movement.",
+            "alt": "Side view of a dark military helicopter in flight, with blurred rotor blades, landing wheels, and equipment beneath its wings."
         }
     }
 }

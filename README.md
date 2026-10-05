@@ -2,7 +2,7 @@
 
 A walkable, Pokémon-inspired personal museum. The lobby tells Reuben’s engineering story; the photography wing turns each album directory into a room. Booklets, a full-size photo viewer, and a direct résumé view make all content available without walking.
 
-The site builds from the repository root. The old Angular application has been removed; all 14 original album photographs are preserved in `photos/`.
+The site builds from the repository root. The old Angular application has been removed; album originals live in `photos/`.
 
 The museum fills a wider desktop layout with a close view of the room, a compact introduction, and narrow outer margins. On phones, the camera follows the visitor. The lobby’s **Internet shelf** opens a collection of favourite sites, and **@reu.shoots** links to Reuben’s photography Instagram.
 
@@ -41,6 +41,8 @@ photos/
 
 JPG/JPEG, PNG, WebP, and AVIF files are discovered automatically, including uppercase extensions. Other files and nested directories are ignored. An empty directory becomes an empty room (include `album.json` or `.gitkeep` to retain it in Git). Natural filename order is the default. Rebuild after adding files.
 
+PNG originals are tracked with Git LFS through `.gitattributes`. After cloning, run `git lfs install` and `git lfs pull` if your checkout contains pointer files instead of images. The GitHub Actions checkout uses `lfs: true` to download the original image data before building. Ensure new LFS objects are pushed with your commits. The build reports the affected photo path and recovery instructions if a pointer was not downloaded; it also identifies corrupt or unsupported input files rather than silently dropping photos.
+
 Optional `album.json` example:
 
 ```json
@@ -74,6 +76,7 @@ Rooms show six photographs per section, with previous/next sections for larger a
 - `src/game.js`: artwork, controls, room layouts, and exhibit interactions.
 - `src/geometry.js`: collision, nearby exhibits, pathfinding, and gallery sections.
 - `src/app.js`: panels, booklets, hash navigation, and visited-photo state.
+- `scripts/images.mjs`: image conversion and actionable errors for missing LFS data or invalid images.
 
 ## Controls and accessibility
 
@@ -89,7 +92,7 @@ Commit source, `photos/` (including optional album metadata), and `pnpm-lock.yam
 
 ## GitHub Pages
 
-`.github/workflows/pages.yml` tests and builds pull requests. Pushes to `main`, or a manual workflow run, also deploy `dist/` with the official GitHub Pages actions. Relative asset paths preserve the existing `/rtsite/` project address and work at a custom-domain root.
+`.github/workflows/pages.yml` downloads Git LFS images, tests, and builds pull requests. Pushes to `main`, or a manual workflow run, also deploy `dist/` with the official GitHub Pages actions. Relative asset paths support both a `/rtsite/` project address and a user site such as `ReubenTeng.github.io` at the domain root.
 
 In **Settings → Pages → Build and deployment**, select **GitHub Actions** as the publishing source. The previous Angular site used `angular-cli-ghpages`; that branch-based deploy command is replaced by the root workflow. No secrets or third-party hosting are needed. See [GitHub’s custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 

@@ -1,8 +1,8 @@
 import { mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import sharp from 'sharp';
 import { discoverAlbums } from './catalog.mjs';
+import { optimizePhoto } from './images.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const destination = path.join(root, 'dist');
@@ -15,11 +15,11 @@ for (const album of albums) {
   for (const photo of album.photos) {
     const input = path.join(root, 'photos', album.directory, photo.filename);
     const stem = `${album.id}-${photo.id}`;
-    const pipeline = sharp(input).rotate();
     photo.thumbnail = `./media/${stem}-thumb.webp`;
     photo.src = `./media/${stem}.webp`;
-    await pipeline.clone().resize(480, 480, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 78 }).toFile(path.join(destination, photo.thumbnail));
-    const info = await pipeline.clone().resize(2400, 2400, { fit: 'inside', withoutEnlargement: true }).webp({ quality: 88 }).toFile(path.join(destination, photo.src));
+    const label = `photos/${album.directory}/${photo.filename}`;
+    console.log(`Processing ${label}`);
+    const info = await optimizePhoto(input, path.join(destination, photo.thumbnail), path.join(destination, photo.src), label);
     photo.width = info.width;
     photo.height = info.height;
     delete photo.filename;

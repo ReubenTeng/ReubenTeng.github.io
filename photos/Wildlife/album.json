@@ -1,29 +1,34 @@
 {
-    "title": "Europe",
-    "description": "Long afternoons, passing trains, and the art of getting a little lost.",
+    "title": "Wildlife",
+    "description": "Quiet pauses, bright colours, and small encounters among the leaves.",
     "color": "#8b9475",
     "cover": "DSCF5547.jpg",
 
     "photos": {
         "DSCF5425.jpg": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Among the branches",
+            "caption": "A quiet pause in the canopy.",
+            "alt": "A grey monkey with a pale face and reddish legs sitting among branching trees and green leaves."
         },
         "DSCF5491.jpg": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Electric blue",
+            "caption": "A flash of blue in a world of green.",
+            "alt": "An iridescent blue bird with a bright yellow eye perched on a thin branch against green foliage."
         },
         "DSCF5538.jpg": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Through the leaves",
+            "caption": "Just enough of a glimpse to make you stop.",
+            "alt": "An orange-and-black patterned bird peering through overlapping green leaves, with its head and part of its chest visible."
         },
         "DSCF5547.jpg": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Resting lines",
+            "caption": "Stripes, soft light, and nowhere to be.",
+            "alt": "A duck with a long blue-grey bill and fine black-and-white striped plumage resting on a mossy log."
         },
         "DSCF5573.jpg": {
-            "title": "Lorem Ipsum",
-            "alt": ""
+            "title": "Making an entrance",
+            "caption": "One stretch of the wings, with a bright red backdrop.",
+            "alt": "A brown wading bird spreading its wings in shallow water, with several vivid red birds behind it."
         }
     }
 }
