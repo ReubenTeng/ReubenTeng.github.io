@@ -1,0 +1,18 @@
+# Dependencies and generated site
+/node_modules/
+/dist/
+/.pnpm-store/
+
+# Local scratch files and verification output
+/work/
+/coverage/
+/test-results/
+/playwright-report/
+*.log
+
+# Machine-specific configuration
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db

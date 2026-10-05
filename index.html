@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ef">
+  <meta name="description" content="Step into Reuben Teng’s little museum. Explore a product engineer’s journey, then wander through photographs from Europe, Korea, and Singapore.">
+  <meta property="og:title" content="Reuben Teng — A little museum">
+  <meta property="og:description" content="A place for the things I build, the places I go, and the moments I keep.">
+  <title>Reuben Teng — A little museum</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to museum controls</a>
+  <header class="site-header">
+    <a class="brand" href="#lobby" aria-label="Reuben Teng, return to lobby"><span class="brand-mark" aria-hidden="true">rt<span>✳</span></span><span>REUBEN TENG<small>ENGINEER & OBSERVER</small></span></a>
+    <nav aria-label="Main navigation"><a class="nav-link active" href="#lobby">The lobby</a><a class="nav-link" href="#museum">Photo museum <span>↗</span></a><button class="nav-link" data-action="links" aria-label="Internet shelf">Links</button><button class="nav-link" data-action="resume">Résumé</button></nav>
+    <span class="open-sign"><i></i> OPEN FOR EXPLORING</span>
+  </header>
+  <main id="content">
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow"><span class="tiny-star">✳</span> A PERSONAL SPACE, MADE EXPLORABLE</p><h1 id="page-title">A little world.<br><em>A lot to discover.</em></h1></div>
+      <div class="intro-note"><p>I’m Reuben, a product engineer with a camera.<br>Welcome to a collection of things I build,<br class="desktop-break"> places I go, and moments I keep.</p><span class="hand-note">Make yourself at home. <span aria-hidden="true">↙</span></span></div>
+    </section>
+    <section class="museum-shell" aria-label="Interactive museum">
+      <div class="museum-topbar"><div class="location"><span class="location-icon" aria-hidden="true">⌖</span><span id="floor-label">GROUND FLOOR</span><span class="slash">/</span><strong id="room-label">The lobby</strong></div><div class="topbar-actions"><span class="live-dot"></span><span id="visit-count">YOUR VISIT STARTS HERE</span><button class="icon-button" data-action="help" aria-label="How to explore">?</button></div></div>
+      <div class="museum-body">
+        <div class="world-column">
+          <div class="world-wrap" id="world-wrap"><canvas id="world" tabindex="0" aria-label="Walkable museum. Use arrow keys or WASD to move, E or Enter to interact. All exhibits are also available in the adjacent guide."></canvas><button id="interact" class="interaction-prompt" hidden><kbd>E</kbd><span>Say hello</span><span>↵</span></button><div class="touch-controls" aria-label="Movement controls"><div class="dpad"><button data-direction="up" aria-label="Walk up">↑</button><button data-direction="left" aria-label="Walk left">←</button><button data-direction="down" aria-label="Walk down">↓</button><button data-direction="right" aria-label="Walk right">→</button></div><button class="touch-interact" data-action="interact" aria-label="Interact with nearby exhibit">A</button></div></div>
+        </div>
+        <aside class="guide" id="guide" aria-label="Room guide"></aside>
+      </div>
+      <div class="control-bar"><div><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> <span class="control-description">or arrows to move</span></span><span><kbd>E</kbd> <span class="control-description">to interact</span></span><span class="click-hint">⌁ &nbsp; Or click an exhibit</span></div><button data-action="reset">↺ Back to entrance</button><button data-action="albums">Just here for the photos? <span>↗</span></button></div>
+    </section>
+    <section class="below-museum"><p><span>01 — THE LOBBY</span> A journey in building things.</p><span class="dotted-line"></span><p><span>02 — THE MUSEUM</span> A practice in paying attention.</p><span class="small-flower" aria-hidden="true">✳</span></section>
+  </main>
+  <footer class="site-footer"><span>A little museum by Reuben Teng.</span><span>Built with curiosity. Best explored slowly.</span><a id="instagram-footer" href="https://www.instagram.com/reu.shoots" target="_blank" rel="noopener noreferrer">Photography · @reu.shoots ↗</a><a href="https://github.com/ReubenTeng" target="_blank" rel="noreferrer">GitHub ↗</a></footer>
+  <dialog id="panel" aria-labelledby="panel-title"><div class="dialog-bar"><span id="panel-kicker">THE MUSEUM GUIDE</span><button class="icon-button close-button" data-action="close" aria-label="Close panel">×</button></div><div id="panel-body"></div></dialog>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+  <noscript><div class="noscript">This walkable museum needs JavaScript. Reuben Teng is a founding product engineer at Speedback, previously at Illumina and HackerTrail, and a NUS Computer Science graduate with Honours (Distinction). His interests include photography, bouldering, dodgeball, and music.</div></noscript>
+</body>
+</html>
