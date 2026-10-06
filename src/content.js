@@ -27,3 +27,7 @@ export const favouriteSites = [
   { title: 'Let Me Google That', url: 'https://letmegooglethat.com/', category: 'A LITTLE MISCHIEF', description: 'A very pointed way to share a search.' }
 ];
 export const photographyInstagram = { handle: '@reu.shoots', url: 'https://www.instagram.com/reu.shoots' };
+export const contactLinks = [
+  { title: 'LinkedIn', url: 'https://www.linkedin.com/in/reuben-teng/', description: 'Say hello, talk about an idea, or get in touch about working together.' },
+  { title: 'GitHub', url: 'https://github.com/ReubenTeng', description: 'Explore my projects and see what I’m building.' }
+];

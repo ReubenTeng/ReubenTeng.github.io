@@ -1,5 +1,5 @@
 import { Museum } from './game.js';
-import { intro, journey, skills, interests, certification, favouriteSites, photographyInstagram } from './content.js';
+import { intro, journey, skills, interests, certification, favouriteSites, photographyInstagram, contactLinks } from './content.js';
 
 const $ = (selector) => document.querySelector(selector);
 const escapeHTML = (value) => String(value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[char]);
@@ -48,10 +48,13 @@ function renderGuide(){
     const a=museum.album,cover=coverOf(a),count=a.photos.filter(p=>seen.has(photoKey(a,p))).length;
     $('#guide').innerHTML=`<p class="guide-eyebrow">A PLACE, REMEMBERED</p><h2>${escapeHTML(a.title)}</h2><p class="guide-intro">${escapeHTML(a.description)}</p>${cover?`<img class="guide-photo" src="${attr(cover.thumbnail)}" alt="${attr(cover.alt)}">`:''}<p class="guide-subtitle">${count} OF ${a.photos.length} MOMENTS DISCOVERED</p><p class="guide-intro">Walk up to a frame to take a closer look. The booklet keeps the whole collection in one place.</p>${a.photos.length>6?`<div class="section-controls"><button data-action="section" data-section="${museum.section-1}" ${museum.section===0?'disabled':''} aria-label="Previous gallery section">←</button><span>ROOM ${museum.section+1} / ${Math.ceil(a.photos.length/6)}</span><button data-action="section" data-section="${museum.section+1}" ${(museum.section+1)*6>=a.photos.length?'disabled':''} aria-label="Next gallery section">→</button></div>`:''}${button('booklet',`Open the album booklet ${iconArrow}`,'primary-button',`data-id="${attr(a.id)}"`)}<p class="guide-footnote">${button('museum','← Back to the album hall','')}</p>`;
   }
-  if(isLobby)$('#guide .side-links').insertAdjacentHTML('beforeend',button('links','↗ Internet shelf',''));
+  if(isLobby)$('#guide .side-links').insertAdjacentHTML('beforeend',button('links','↗ Internet shelf','')+button('contact','☎ Say hello',''));
   else $('#guide').insertAdjacentHTML('beforeend',instagramLink());
 }
 
+function showContact(){
+  showPanel('THE LOBBY / THE TELEPHONE',`<div class="panel-content"><div class="welcome-symbol" aria-hidden="true">☎</div><p class="eyebrow">LET’S KEEP IN TOUCH</p><h2 id="panel-title">Say hello.</h2><p>Have something in mind? Drop me a message on LinkedIn, or take a look at what I’m building on GitHub.</p><div class="bookmark-grid">${contactLinks.map(link=>`<a class="bookmark-card" href="${attr(link.url)}" target="_blank" rel="noopener noreferrer"><h3>${escapeHTML(link.title)} <span aria-hidden="true">↗</span></h3><p>${escapeHTML(link.description)}</p><small>Opens in a new tab</small></a>`).join('')}</div></div>`);
+}
 function showLinks(){
   showPanel('THE LOBBY / THE INTERNET SHELF',`<div class="panel-content"><p class="eyebrow">GOOD CORNERS OF THE INTERNET</p><h2 id="panel-title">Worth a little detour.</h2><p>A collection of cool sites I like. Pick something off the shelf and see where it takes you.</p><div class="bookmark-grid">${favouriteSites.map((site,i)=>`<a class="bookmark-card" href="${attr(site.url)}" target="_blank" rel="noopener noreferrer"><span class="bookmark-category">${String(i+1).padStart(2,'0')} / ${escapeHTML(site.category)}</span><h3>${escapeHTML(site.title)} <span aria-hidden="true">↗</span></h3><p>${escapeHTML(site.description)}</p><small>${escapeHTML(new URL(site.url).hostname.replace(/^www\./,''))}</small></a>`).join('')}</div><div class="instagram-card"><p class="eyebrow">AND A LITTLE CORNER OF MY OWN</p><h3>More through my lens.</h3><p>My photography, over on Instagram.</p>${instagramLink()}</div></div>`);
 }
@@ -92,6 +95,7 @@ function route(){
   modalReturn=previousMap;activePhoto=null;
   if(type==='albums'){showAlbums();return;}
   if(type==='links'){showLinks();return;}
+  if(type==='contact'){showContact();return;}
   if(type==='album'||type==='photo'){
     const album=albumById(id);if(!album){showPanel('A SMALL DETOUR',`<div class="panel-content"><h2 id="panel-title">That room isn’t here.</h2><p>The album may have moved. The rest of the museum is still open.</p>${button('albums','Browse the collection ↗','primary-button')}</div>`);return;}
     if(type==='album'){showBooklet(album);return;}
@@ -125,6 +129,7 @@ $('#interact').addEventListener('click',()=>museum.interact());
 $('.skip-link').addEventListener('click',event=>{event.preventDefault();$('#world').focus();});
 $('#instagram-footer').href=photographyInstagram.url;
 $('#instagram-footer').textContent=`Photography · ${photographyInstagram.handle} ↗`;
+$('#contact-link').href=contactLinks.find(link=>link.title==='LinkedIn').url;
 window.addEventListener('hashchange',route);
 async function loadAlbums(){
   try{const response=await fetch('./albums.json');if(!response.ok)throw new Error(`Album request failed: ${response.status}`);albums=await response.json();loadError=false;}

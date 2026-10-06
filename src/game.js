@@ -1,4 +1,4 @@
-import { canStand, movePlayer, nearestExhibit, findPath, sectionPhotos } from './geometry.js';
+import { canStand, movePlayer, nearestExhibit, findPath, sectionPhotos, galleryPhotoLayout } from './geometry.js';
 const C = { dark:'#39503d', floor:'#d8c7a0', seam:'#cbbb98', wall:'#f0edce', trim:'#b3ad86', plant:'#597653', lightPlant:'#8ba16b', pot:'#b48662', rug:'#79946d', rugLight:'#b1c099', wood:'#9d7656', shadow:'#52603928' };
 const bounds = { left:80, right:920, top:207, bottom:573 };
 const locations = [150,365,585,800];
@@ -59,6 +59,7 @@ export class Museum {
       add('welcome','Hello, I’m Reuben',397,342,205,73,{type:'welcome'},{x:500,y:443});this.obstacles.push({x:397,y:342,w:205,h:74});
       add('skills','The toolkit',100,360,130,92,{type:'skills'});this.obstacles.push({x:100,y:385,w:130,h:68});
       add('links','The internet shelf',259,366,60,85,{type:'links'},{x:287,y:479});this.obstacles.push({x:259,y:398,w:60,h:53});
+      add('telephone','Say hello · Contact me',650,267,78,77,{type:'contact'},{x:689,y:372});this.obstacles.push({x:650,y:300,w:78,h:44});
       add('interests','Outside of work',738,407,121,72,{type:'interests'},{x:770,y:510});this.obstacles.push({x:738,y:407,w:121,h:72});
       add('museum','Enter the photo museum',873,245,74,126,{type:'museum'},{x:839,y:340});
       add('aws','AWS · Certified in 2025',778,273,57,56,{type:'certification'},{x:783,y:355});
@@ -70,7 +71,7 @@ export class Museum {
       if(section>0)add('previous','Previous albums',75,432,70,60,{type:'hallSection',section:section-1},{x:151,y:479});
       if((section+1)*3<this.albums.length)add('next','More albums',855,432,70,60,{type:'hallSection',section:section+1},{x:834,y:479});
     }else{
-      sectionPhotos(album.photos,section).forEach((photo,i)=>{const p=gallerySlots[i];add(photo.id,photo.title,p.x-74,p.y-65,148,110,{type:'photo',albumId:album.id,photoId:photo.id},{x:p.x,y:p.y+71});if(i>=3)this.obstacles.push({x:p.x-90,y:p.y-68,w:180,h:102});});
+      sectionPhotos(album.photos,section).forEach((photo,i)=>{const p=gallerySlots[i],{frame}=galleryPhotoLayout(photo,p);add(photo.id,photo.title,frame.x,frame.y,frame.w,frame.h,{type:'photo',albumId:album.id,photoId:photo.id},{x:p.x,y:p.y+71});if(i>=3)this.obstacles.push({x:p.x-90,y:p.y-68,w:180,h:102});});
       add('booklet',`${album.title} · album booklet`,96,460,84,50,{type:'booklet',albumId:album.id},{x:218,y:508});this.obstacles.push({x:96,y:474,w:84,h:36});
       add('museum','Return to the album hall',445,555,110,50,{type:'museum'},{x:500,y:542});
       if(section>0)add('previous','Previous gallery section',75,266,65,57,{type:'section',section:section-1},{x:160,y:285});
@@ -148,6 +149,7 @@ export class Museum {
     this.rect(549,328,20,24,'#d2b795');this.rect(552,324,14,6,'#fbf1d0');this.rect(569,332,6,12,'#ba9f7c');
     this.bookshelf(108,357);this.plaque(166,456,'THE TOOLKIT','SKILLS & THINGS I USE');
     this.internetShelf(259,366);
+    this.telephone(650,267);
     this.turntable(745,410);this.plaque(793,481,'OFF THE CLOCK','A FEW OTHER OBSESSIONS');
     this.door(885,253,65,111,'#638776');this.rect(878,235,79,16,'#e8e6c9');this.text('MUSEUM →',917,247,8);this.text('PHOTOGRAPHS',906,382,7,'#7d8263');
     this.frame(783,274,47,46,'#b9ab71');this.text('AWS',806,299,10,'#f7f0d2');this.text('2025',806,338,8,'#877f60');
@@ -156,6 +158,18 @@ export class Museum {
     this.text('YOU ARE HERE',500,556,7,'#a38e68');
   }
   rug(x,y,w,h){this.rect(x+4,y+4,w,h,'#8b8f6935');this.rect(x,y,w,h,C.rug);this.rect(x+8,y+8,w-16,h-16,'#a6b58b');this.rect(x+11,y+11,w-22,h-22,C.rug);this.rect(x+17,y+17,w-34,h-34,'#829a73');for(let a=x+22;a<x+w-20;a+=11){this.rect(a,y-3,2,4,'#b3be91');this.rect(a,y+h,2,4,'#b3be91');}for(let a=x+30;a<x+w-22;a+=21)this.rect(a,y+30,2,h-60,'#a3b48b20');}
+  telephone(x,y){
+    // A rotary telephone on a small wooden stand, in the room’s pixel-art palette.
+    this.shadow(x,y+33,78,44);this.rect(x+5,y+43,7,34,'#806b50');this.rect(x+66,y+43,7,34,'#806b50');
+    this.rect(x,y+31,78,16,'#a68057');this.rect(x+3,y+31,72,6,'#c8aa75');
+    this.rect(x+15,y+12,48,21,'#526b5a');this.rect(x+10,y+25,58,9,'#39503d');
+    this.rect(x+10,y+2,58,8,'#39503d');this.rect(x+8,y+7,16,10,'#39503d');this.rect(x+54,y+7,16,10,'#39503d');
+    this.rect(x+16,y+2,47,3,'#7d9375');
+    this.rect(x+31,y+15,18,15,'#d8c7a0');this.rect(x+36,y+19,8,7,'#526b5a');
+    for(const [dx,dy] of [[33,16],[44,16],[32,22],[45,22],[37,27]])this.rect(x+dx,y+dy,3,2,'#806b50');
+    for(let i=0;i<5;i++)this.rect(x+70+(i%2)*3,y+16+i*5,4,5,'#39503d');
+    this.rect(x+3,y+51,72,17,'#f4efd7');this.text('SAY HELLO',x+39,y+63,8);
+  }
   internetShelf(x,y){
     this.shadow(x,y,60,85);this.rect(x,y,60,85,'#a18c64');this.rect(x+4,y+4,52,69,'#d3c59c');
     for(let row=0;row<2;row++)for(let col=0;col<2;col++){
@@ -189,7 +203,8 @@ export class Museum {
   drawGallery(){
     const photos=sectionPhotos(this.album.photos,this.section);
     photos.forEach((photo,i)=>{const p=gallerySlots[i];if(i>=3){this.shadow(p.x-90,p.y-73,180,99);this.rect(p.x-90,p.y-73,180,100,'#ece8ce');this.rect(p.x-90,p.y+21,180,7,'#b2a783');}
-      this.frame(p.x-70,p.y-62,140,103,'#e5e2ce');this.photo(photo,p.x-55,p.y-48,110,75);this.plaque(p.x,p.y+45,`${String(this.section*6+i+1).padStart(2,'0')} / ${String(this.album.photos.length).padStart(2,'0')}`,photo.title.length>24?photo.title.slice(0,22)+'…':photo.title);
+      const {image,frame,plaqueY}=galleryPhotoLayout(photo,p);
+      this.frame(frame.x,frame.y,frame.w,frame.h,'#e5e2ce');this.photo(photo,image.x,image.y,image.w,image.h);this.plaque(p.x,plaqueY,`${String(this.section*6+i+1).padStart(2,'0')} / ${String(this.album.photos.length).padStart(2,'0')}`,photo.title.length>24?photo.title.slice(0,22)+'…':photo.title);
     });
     if(!photos.length){this.text('A ROOM FOR FUTURE MEMORIES',520,300,19);this.text('This album has no photographs yet.',520,335,12);}
     this.book(138,480);this.text('THE BOOKLET',138,536,8,'#827e5b');this.text('↓ ALBUM HALL',500,584,10,'#617252');

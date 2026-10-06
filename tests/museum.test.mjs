@@ -4,7 +4,31 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { discoverAlbums } from '../scripts/catalog.mjs';
-import { canStand, movePlayer, nearestExhibit, sectionPhotos, findPath } from '../src/geometry.js';
+import { canStand, movePlayer, nearestExhibit, sectionPhotos, findPath, galleryPhotoLayout } from '../src/geometry.js';
+
+test('gallery frames fit portrait, landscape, square, and panoramic photos without cropping',()=>{
+  const slot={x:480,y:166};
+  for(const [width,height] of [[800,1200],[1200,800],[800,800],[3000,500]]){
+    const {image,frame,plaqueY}=galleryPhotoLayout({width,height},slot);
+    assert.ok(Math.abs(image.w/image.h-width/height)<1e-10);
+    assert.ok(image.w<=110 && image.h<=75);
+    assert.ok(Math.abs(image.w-110)<1e-10 || Math.abs(image.h-75)<1e-10);
+    assert.equal(image.x+image.w/2,slot.x);
+    assert.equal(image.y+image.h/2,slot.y-10.5);
+    for(const inset of [image.x-frame.x,image.y-frame.y,frame.x+frame.w-image.x-image.w,frame.y+frame.h-image.y-image.h])assert.ok(Math.abs(inset-13)<1e-10);
+    assert.ok(plaqueY>frame.y+frame.h);
+    assert.ok(frame.x>=slot.x-70 && frame.x+frame.w<=slot.x+70);
+    assert.ok(frame.y>=slot.y-62 && frame.y+frame.h<=slot.y+41);
+  }
+});
+
+test('gallery layout tolerates missing or invalid photo dimensions',()=>{
+  for(const photo of [{},{width:0,height:-2},{width:NaN,height:Infinity}]){
+    const {image,frame}=galleryPhotoLayout(photo,{x:195,y:361});
+    assert.equal(image.w,110);assert.equal(image.h,75);
+    assert.ok(Object.values(frame).every(Number.isFinite));
+  }
+});
 
 test('albums discover mixed-case extensions, skip unrelated files, honor metadata, and retain empty rooms', async()=>{
   const temp=await mkdtemp(path.join(tmpdir(),'rt-catalog-'));

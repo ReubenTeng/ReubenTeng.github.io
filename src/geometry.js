@@ -15,6 +15,17 @@ export function nearestExhibit(player, exhibits, radius = 102) {
 }
 export function sectionPhotos(photos, section, size = 6) { return photos.slice(section * size, (section + 1) * size); }
 
+export function galleryPhotoLayout(photo, slot) {
+  const width = Number.isFinite(photo.width) && photo.width > 0 ? photo.width : 110;
+  const height = Number.isFinite(photo.height) && photo.height > 0 ? photo.height : 75;
+  const scale = Math.min(110 / width, 75 / height);
+  const w = width * scale, h = height * scale;
+  const image = { x: slot.x - w / 2, y: slot.y - 10.5 - h / 2, w, h };
+  const inset = 13;
+  const frame = { x: image.x - inset, y: image.y - inset, w: w + inset * 2, h: h + inset * 2 };
+  return { image, frame, plaqueY: frame.y + frame.h + 10 };
+}
+
 export function findPath(start, target, obstacles, bounds) {
   const grid = 20;
   const cell = (p) => ({ x: Math.round(p.x / grid), y: Math.round(p.y / grid) });

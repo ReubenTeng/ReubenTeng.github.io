@@ -66,7 +66,7 @@ Names in metadata are case-sensitive. Files omitted from `order` follow in natur
 
 The build creates 480px thumbnails and display images up to 2400px and strips embedded metadata from generated WebP files. Originals are never changed or included in the deployed artifact. Photos committed to a public repository remain accessible through GitHub itself.
 
-Rooms show six photographs per section, with previous/next sections for larger albums. The album hall shows three entrances per section and provides a directory of every album.
+Rooms show six photographs per section, with previous/next sections for larger albums. Gallery frames follow each photo’s aspect ratio with consistent matting, showing the complete photograph without cropping. The album hall shows three entrances per section and provides a directory of every album.
 
 ## Update content and design
 
@@ -85,6 +85,8 @@ Focus or click the museum, then use WASD / arrow keys to walk and E / Enter to i
 Photo discovery progress stays in the visitor’s browser; the site works if storage is unavailable. Hash routes support shared album and photo links without a server-side router or a Pages 404 workaround.
 
 The Internet shelf is accessible from its postcard stand in the lobby, the room guide, and the main navigation. Its links open in new tabs, keeping the museum visit in place. Edit `favouriteSites` in `src/content.js` to change the collection. The Instagram link also appears in the photo museum guide and site footer.
+
+The lobby telephone opens a “Say hello” panel with LinkedIn and GitHub links. Click the telephone, walk up and press E / Enter, or use “Say hello” in the room guide. “Contact me” in the main navigation opens LinkedIn directly. Profile links live in `contactLinks` in `src/content.js`; the navigation also includes a fallback LinkedIn URL in `index.html` for visitors without JavaScript.
 
 ## Git hygiene
 
