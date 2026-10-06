@@ -1,0 +1,46 @@
+{
+  "title": "Golden Mile Complex",
+  "description": "Golden Mile Complex closed in May 2023 as its tenants moved out ahead of redevelopment. The building was conserved, but the shops and community that made it Singapore's Little Thailand had to leave. These photographs record its corridors, open spaces, and small details on film: four frames in black and white, and two in colour.",
+  "color": "#b49a59",
+  "cover": "1885014.jpg",
+  "order": [
+    "1885014.jpg",
+    "1885010.jpg",
+    "1780026.jpg",
+    "1780027.jpg",
+    "1780034.jpg",
+    "1780022.jpg"
+  ],
+  "photos": {
+    "1885014.jpg": {
+      "title": "Along the yellow columns",
+      "caption": "Yellow columns line an open walkway above the city. Colour film records the warmth of the painted concrete.",
+      "alt": "Yellow columns and a tall wire fence run along an outdoor walkway, with the city visible beyond."
+    },
+    "1885010.jpg": {
+      "title": "Down the corridor",
+      "caption": "A long corridor leads past yellow walls and doorways. A second colour frame brings the walk inside.",
+      "alt": "A narrow corridor extends past white walls, yellow partitions, and doorways beneath a low ceiling."
+    },
+    "1780026.jpg": {
+      "title": "At the doorway",
+      "caption": "An open gate and a row of windows mark a small part of daily life here. Black-and-white film brings out the worn surfaces.",
+      "alt": "Black-and-white photograph of a narrow passage with an open metal gate, windows, and objects beside the railing."
+    },
+    "1780027.jpg": {
+      "title": "Circles of light",
+      "caption": "Round windows cast repeated shapes on the floor. The dark corridor draws the eye towards its far end.",
+      "alt": "Black-and-white photograph of a long, dark corridor with circular windows casting rings of light on the floor."
+    },
+    "1780034.jpg": {
+      "title": "A plant beside the column",
+      "caption": "A small potted plant stands against the concrete. As the complex closed, details like this belonged to a place about to change.",
+      "alt": "Black-and-white photograph of a small potted plant beside a large concrete column, with long shadows across an open floor."
+    },
+    "1780022.jpg": {
+      "title": "An open view",
+      "caption": "The walk ends in an open space, with the city visible between the columns. The building remains; its old daily life has moved on.",
+      "alt": "Black-and-white photograph of tall concrete columns across an open terrace, with distant buildings visible between them."
+    }
+  }
+}

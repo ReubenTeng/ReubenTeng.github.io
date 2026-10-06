@@ -1,34 +1,76 @@
 {
-    "title": "Wildlife",
-    "description": "Quiet pauses, bright colours, and small encounters among the leaves.",
-    "color": "#8b9475",
-    "cover": "DSCF5547.jpg",
-
-    "photos": {
-        "DSCF5425.jpg": {
-            "title": "Among the branches",
-            "caption": "A quiet pause in the canopy.",
-            "alt": "A grey monkey with a pale face and reddish legs sitting among branching trees and green leaves."
-        },
-        "DSCF5491.jpg": {
-            "title": "Electric blue",
-            "caption": "A flash of blue in a world of green.",
-            "alt": "An iridescent blue bird with a bright yellow eye perched on a thin branch against green foliage."
-        },
-        "DSCF5538.jpg": {
-            "title": "Through the leaves",
-            "caption": "Just enough of a glimpse to make you stop.",
-            "alt": "An orange-and-black patterned bird peering through overlapping green leaves, with its head and part of its chest visible."
-        },
-        "DSCF5547.jpg": {
-            "title": "Resting lines",
-            "caption": "Stripes, soft light, and nowhere to be.",
-            "alt": "A duck with a long blue-grey bill and fine black-and-white striped plumage resting on a mossy log."
-        },
-        "DSCF5573.jpg": {
-            "title": "Making an entrance",
-            "caption": "One stretch of the wings, with a bright red backdrop.",
-            "alt": "A brown wading bird spreading its wings in shallow water, with several vivid red birds behind it."
-        }
+  "title": "Wildlife",
+  "description": "A walk from the canopy to the forest floor. Birds among the leaves give way to small details, reptiles in the shade, and a quiet stop by the water.",
+  "color": "#8b9475",
+  "cover": "DSCF5491.jpg",
+  "order": [
+    "DSCF5425.jpg",
+    "photo_2026-10-06 17.54.43.jpeg",
+    "DSCF5538.jpg",
+    "DSCF5491.jpg",
+    "photo_2026-10-06 17.54.35.jpeg",
+    "photo_2026-10-06 17.54.41.jpeg",
+    "photo_2026-10-06 17.54.34.jpeg",
+    "photo_2026-10-06 17.54.31.jpeg",
+    "photo_2026-10-06 17.54.47.jpeg",
+    "DSCF5573.jpg",
+    "DSCF5547.jpg"
+  ],
+  "photos": {
+    "DSCF5425.jpg": {
+      "title": "Among the branches",
+      "caption": "A monkey rests above the ground, one arm raised to a branch. The walk begins in the canopy.",
+      "alt": "A grey monkey with a pale face and reddish legs sits in a tree, with one arm stretched up to a branch."
+    },
+    "photo_2026-10-06 17.54.43.jpeg": {
+      "title": "Among the green leaves",
+      "caption": "A yellow bird sits deep in the foliage, framed by branches and leaves.",
+      "alt": "A yellow bird with a dark face sits partly hidden among green leaves and crossing branches."
+    },
+    "DSCF5538.jpg": {
+      "title": "Through the leaves",
+      "caption": "Orange and black feathers appear through a gap in the foliage.",
+      "alt": "An orange-and-black bird looks down from between overlapping green leaves."
+    },
+    "DSCF5491.jpg": {
+      "title": "Electric blue",
+      "caption": "Blue feathers and a yellow eye stand out against the green background.",
+      "alt": "An iridescent blue bird with a bright yellow eye perches on a thin branch against green foliage."
+    },
+    "photo_2026-10-06 17.54.35.jpeg": {
+      "title": "On a thin branch",
+      "caption": "A small bird pauses on a branch, with its beak open and the leaves behind it out of focus.",
+      "alt": "A small brown-and-grey bird with a warm brown head and an open beak stands on a thin diagonal branch."
+    },
+    "photo_2026-10-06 17.54.41.jpeg": {
+      "title": "Held by a thread",
+      "caption": "Long legs and fine strands of web stand out against soft green light.",
+      "alt": "A long-legged spider hangs in its web against a blurred green background."
+    },
+    "photo_2026-10-06 17.54.34.jpeg": {
+      "title": "On the tree trunk",
+      "caption": "A snail holds to the bark. Its curved shell adds a small detail to the trunk.",
+      "alt": "A snail with a striped brown shell clings to the side of a tree trunk against green foliage."
+    },
+    "photo_2026-10-06 17.54.31.jpeg": {
+      "title": "Beside the path",
+      "caption": "A lizard rests in the shade beside a low wooden barrier.",
+      "alt": "A large grey-brown lizard rests on soil and dry leaves beneath a low wooden barrier, with its head raised."
+    },
+    "photo_2026-10-06 17.54.47.jpeg": {
+      "title": "Scales and fallen leaves",
+      "caption": "A snake lies among fallen leaves. Patches of light reveal the pattern of its scales.",
+      "alt": "A brown snake rests its head near fallen leaves, with its curved body extending to the right."
+    },
+    "DSCF5573.jpg": {
+      "title": "Wings over the water",
+      "caption": "A brown bird spreads its wings in the shallows, with bright red birds behind it.",
+      "alt": "A brown wading bird spreads its wings in shallow water, with several vivid red birds in the background."
+    },
+    "DSCF5547.jpg": {
+      "title": "Resting by the water",
+      "caption": "A duck rests on a mossy log. Fine feather patterns bring the walk to a quiet close.",
+      "alt": "A duck with a blue-grey bill and fine black-and-white feather patterns rests on a mossy log."
     }
+  }
 }

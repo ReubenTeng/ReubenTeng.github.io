@@ -80,7 +80,7 @@ Rooms show six photographs per section, with previous/next sections for larger a
 
 ## Controls and accessibility
 
-Focus or click the museum, then use WASD / arrow keys to walk and E / Enter to interact. Click the floor to walk there, or click an exhibit directly. On phones, use the directional pad and A button. The guide opens every exhibit without game controls. Photos support previous/next buttons and left/right keys. Escape returns from a photo to its booklet, then to the room. Native dialogs contain keyboard focus. Reduced-motion preferences disable character bobbing and animated prompts.
+Focus or click the museum, then use WASD / arrow keys to walk and E / Enter to interact. Click the floor to walk there, or click an exhibit directly. On phones, use the directional pad and A button. The guide opens every exhibit without game controls. Photos support previous/next buttons and left/right keys. Escape returns from a photo to its booklet, then to the room. Native dialogs contain keyboard focus. Photos open with a subtle fade and zoom, crossfade when browsing, and fade out when closing. The current image stays visible until the next image loads. Reduced-motion preferences disable these transitions, character bobbing, and animated prompts.
 
 Photo discovery progress stays in the visitor’s browser; the site works if storage is unavailable. Hash routes support shared album and photo links without a server-side router or a Pages 404 workaround.
 

@@ -1,0 +1,112 @@
+{
+  "title": "Australia",
+  "description": "Scenes from the road, beside the water, and among the plants and wildlife. Small encounters lead into streets lined with flowers, then out to the harbour as daylight fades.",
+  "color": "#a98469",
+  "cover": "FXT38593.jpg",
+  "order": [
+    "FXT37231.jpg",
+    "FXT36887.jpg",
+    "FXT37752.jpg",
+    "FXT37639.jpg",
+    "FXT37644.jpg",
+    "FXT37586.jpg",
+    "FXT37979.jpg",
+    "FXT38174.jpg",
+    "FXT38262.jpg",
+    "FXT38394.jpg",
+    "FXT38039.jpg",
+    "FXT38486.jpg",
+    "FXT38475.jpg",
+    "FXT38506.jpg",
+    "FXT36827.jpg",
+    "FXT38515.jpg",
+    "FXT38593.jpg"
+  ],
+  "photos": {
+    "FXT37231.jpg": {
+      "title": "The road ahead",
+      "caption": "From the back seat, the road curves away beyond the windscreen. Another stretch of the journey begins.",
+      "alt": "View from the back seat of a car, with two people in silhouette and a curving road visible through the windscreen."
+    },
+    "FXT36887.jpg": {
+      "title": "Across the grass",
+      "caption": "A dog runs across the grass beside the water, with its front paws lifted clear of the ground.",
+      "alt": "A black-and-white dog runs across a grassy area beside water, with a wooded shore in the background."
+    },
+    "FXT37752.jpg": {
+      "title": "Looking out",
+      "caption": "A camera is raised above the white railings. The clear blue sky leaves space around the figure.",
+      "alt": "A person holds a camera to their face at the top of a white-railed platform against a clear blue sky."
+    },
+    "FXT37639.jpg": {
+      "title": "At the water's edge",
+      "caption": "A shorebird crosses the wet sand. Its reflection follows beneath it.",
+      "alt": "A small dark shorebird with a long reddish bill stands on wet sand beside a shallow strip of water and its reflection."
+    },
+    "FXT37644.jpg": {
+      "title": "A small visitor",
+      "caption": "A tiny insect pauses on the wooden table beside a phone. A small detail becomes the subject.",
+      "alt": "A tiny insect on a sunlit wooden table beside a hand holding a phone, with a long shadow across the boards."
+    },
+    "FXT37586.jpg": {
+      "title": "At the end of the jetty",
+      "caption": "The jetty leads towards a low band of cloud. Soft light spreads across the water.",
+      "alt": "A wooden jetty extends into calm water beneath a blue sky and a broad band of grey clouds near the horizon."
+    },
+    "FXT37979.jpg": {
+      "title": "Yellow on the branch",
+      "caption": "Small yellow flowers catch the light along a narrow branch.",
+      "alt": "Small yellow flowers on thin, spiky branches against a dark, blurred background."
+    },
+    "FXT38174.jpg": {
+      "title": "Purple buds",
+      "caption": "Purple buds and open flowers follow the curve of the stems.",
+      "alt": "Purple flower buds and pale purple flowers grow along slender stems against a blurred green background."
+    },
+    "FXT38262.jpg": {
+      "title": "One red flower",
+      "caption": "A single red flower stands among yellow blooms. The wider view brings the colours together.",
+      "alt": "A large round red flower rises above green leaves in front of a dense background of small yellow flowers."
+    },
+    "FXT38394.jpg": {
+      "title": "Resting on a hand",
+      "caption": "A cicada rests on an open hand. Fine veins show through its transparent wings.",
+      "alt": "A large cicada with an orange-and-black body and transparent veined wings rests on a person's open hand."
+    },
+    "FXT38039.jpg": {
+      "title": "Wings at the railing",
+      "caption": "A white bird opens its wings on the railing, with green trees and distant hills behind it.",
+      "alt": "A white bird faces the camera with both wings raised while perched on a dark railing, with trees and hills behind."
+    },
+    "FXT38486.jpg": {
+      "title": "At the corner",
+      "caption": "Red flowers hang over a brick wall beside a one-way sign. The street turns out of view.",
+      "alt": "A one-way arrow sign on a brick wall beneath red flowers, beside a quiet street and pavement."
+    },
+    "FXT38475.jpg": {
+      "title": "Flowers above the street",
+      "caption": "Late light reaches the red flowers above the street. Buildings appear through the gap beside them.",
+      "alt": "A dense mass of red flowers fills the right side of the frame, with pale sky and buildings visible to the left."
+    },
+    "FXT38506.jpg": {
+      "title": "A glimpse of the bridge",
+      "caption": "The street slopes towards the water. Beyond the buildings and trees, part of the bridge comes into view.",
+      "alt": "A sloping street between buildings and trees leads towards water, with a steel arch bridge visible in the distance."
+    },
+    "FXT36827.jpg": {
+      "title": "An orange sky",
+      "caption": "The low sun lights layers of cloud above dark rooftops.",
+      "alt": "A low bright sun shines through layered orange clouds above the silhouettes of rooftops."
+    },
+    "FXT38515.jpg": {
+      "title": "The last light by the water",
+      "caption": "People stand along the waterfront as warm light reaches the horizon.",
+      "alt": "People and railings appear in silhouette beside a harbour, with buildings and a tall amusement ride beneath a blue and orange evening sky."
+    },
+    "FXT38593.jpg": {
+      "title": "The bridge at dusk",
+      "caption": "The bridge crosses a darkening harbour beneath pink clouds. A wide view closes the journey.",
+      "alt": "A large steel arch bridge spans a harbour beneath pink and purple evening clouds, with city buildings along the far shore."
+    }
+  }
+}
