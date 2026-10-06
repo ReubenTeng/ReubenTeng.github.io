@@ -36,6 +36,15 @@ dialog{border:1px solid #d9dfcb;border-radius:12px;padding:0;width:min(820px,cal
   .guide-photo{max-width:280px}
 }
 .bookmark-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:25px 0}
+.viewer-stage{display:grid;background:#14241b}
+.viewer-stage>.viewer-image,.viewer-stage>.photo-error{grid-area:1/1;min-width:0}
+.photo-outgoing{pointer-events:none}
+@media(prefers-reduced-motion:no-preference){
+  .viewer-entering::backdrop{animation:viewer-backdrop-in 200ms ease-out}
+  .viewer-leaving::backdrop{animation:viewer-backdrop-out 120ms ease-out forwards}
+}
+@keyframes viewer-backdrop-in{from{opacity:0}to{opacity:1}}
+@keyframes viewer-backdrop-out{from{opacity:1}to{opacity:0}}
 .bookmark-card{display:flex;flex-direction:column;padding:24px;border:1px solid #d5ddc8;border-radius:6px;background:#eff2e6;transition:background .15s}
 .bookmark-card:hover{background:#e6ebdb;color:var(--green)}
 .bookmark-category{font:8px var(--mono);letter-spacing:1px;color:#728168}

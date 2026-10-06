@@ -1,4 +1,5 @@
 import { Museum } from './game.js';
+import { photoMotion } from './photo-motion.js';
 import { intro, journey, skills, interests, certification, favouriteSites, photographyInstagram, contactLinks } from './content.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -6,6 +7,8 @@ const escapeHTML = (value) => String(value).replace(/[&<>"']/g, char => ({ '&':'
 const attr = escapeHTML;
 let albums=[],loadError=false,worldRoute='#lobby',modalReturn='#lobby',activePhoto=null;
 const dialog=$('#panel');
+const motion=photoMotion(dialog);
+let routeVersion=0;
 let seen;
 try{const stored=JSON.parse(localStorage.getItem('rt-museum-visited')||'[]');seen=new Set(Array.isArray(stored)?stored.filter(x=>typeof x==='string'):[]);}catch{seen=new Set();}
 const totalPhotos=()=>albums.reduce((sum,a)=>sum+a.photos.length,0);
@@ -26,11 +29,14 @@ function skillMarkup(){return Object.entries(skills).map(([group,items])=>`<sect
 function entryMarkup(entry){return `<p class="eyebrow">${entry.date}</p><h3>${escapeHTML(entry.name)}</h3><p class="role">${escapeHTML(entry.role)}</p>${entry.description?`<p>${escapeHTML(entry.description)}</p>`:''}<ul>${entry.bullets.map(b=>`<li>${escapeHTML(b)}</li>`).join('')}</ul>`;}
 function button(action,label,style='secondary-button',extra=''){return `<button class="${style}" data-action="${action}" ${extra}>${label}</button>`;}
 function showPanel(kicker,body,viewer=false){
+  const wasOpen=dialog.open,wasViewer=wasOpen&&dialog.classList.contains('viewer');
+  motion.reset();
   museum.setPaused(true);dialog.classList.toggle('viewer',viewer);$('#panel-kicker').textContent=kicker;$('#panel-body').innerHTML=body;
   if(!dialog.open)dialog.showModal();dialog.scrollTop=0;
   $('#panel-title')?.setAttribute('tabindex','-1');$('#panel-title')?.focus({preventScroll:true});
+  if(viewer&&!wasViewer)motion.open(!wasOpen);
 }
-function closePanel(){if(dialog.open){dialog.close();museum.setPaused(false);$('#world').focus({preventScroll:true});}activePhoto=null;}
+function closePanel(){motion.reset();if(dialog.open){dialog.close();museum.setPaused(false);$('#world').focus({preventScroll:true});}activePhoto=null;}
 function closeToMap(){navigate(activePhoto?`#album/${activePhoto.album.id}`:modalReturn);}
 dialog.addEventListener('cancel',event=>{event.preventDefault();closeToMap();});
 dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeToMap();}});
@@ -66,9 +72,11 @@ function showBooklet(album){
   showPanel('THE ALBUM BOOKLET',`<div class="panel-content"><p class="eyebrow">${album.photos.length} MOMENTS, COLLECTED</p><div class="album-intro"><div><h2 id="panel-title">${escapeHTML(album.title)}</h2><p>${escapeHTML(album.description)}</p></div>${button('room','Walk through this room ↗','secondary-button',`data-id="${attr(album.id)}"`)}</div>${album.photos.length?`<div class="booklet-grid">${album.photos.map((photo,i)=>`<button class="photo-card" data-action="photo" data-id="${attr(album.id)}" data-photo="${attr(photo.id)}"><img src="${attr(photo.thumbnail)}" alt="${attr(photo.alt)}" loading="lazy" width="${photo.width}" height="${photo.height}"><span>${String(i+1).padStart(2,'0')} ${seen.has(photoKey(album,photo))?'· DISCOVERED':''}</span><small>${escapeHTML(photo.title)}</small></button>`).join('')}</div>`:'<div class="empty-state">There are no photographs in this room yet.</div>'}<div class="panel-actions">${button('albums','← All albums')}</div></div>`);
 }
 function showPhoto(album,photo){
+  const previous=motion.previousPhoto();
   activePhoto={album,photo};markSeen(album,photo);const index=album.photos.indexOf(photo);
   showPanel(`${album.title.toUpperCase()} / ${String(index+1).padStart(2,'0')} OF ${String(album.photos.length).padStart(2,'0')}`,`<div class="viewer-content"><img id="full-photo" class="viewer-image" src="${attr(photo.src)}" alt="${attr(photo.alt)}" width="${photo.width}" height="${photo.height}"><div class="viewer-caption"><div><h2 id="panel-title">${escapeHTML(photo.title)}</h2><p>${escapeHTML(photo.caption||album.title)}</p></div><span aria-label="Discovered">✳</span></div><div class="viewer-controls"><button data-action="previous-photo" ${index===0?'disabled':''}>← Previous</button><button class="back-booklet" data-action="booklet" data-id="${attr(album.id)}">▤ &nbsp; Back to booklet</button><button data-action="next-photo" ${index===album.photos.length-1?'disabled':''}>Next →</button></div></div>`,true);
-  $('#full-photo').addEventListener('error',()=>{const note=document.createElement('p');note.className='photo-error';note.textContent='This photograph couldn’t load. Try reopening it, or continue to the next one.';$('#full-photo').replaceWith(note);},{once:true});
+  const image=$('#full-photo'),stage=document.createElement('div');stage.className='viewer-stage';image.before(stage);stage.append(image);
+  motion.reveal(image,previous);
   for(const next of [album.photos[index-1],album.photos[index+1]])if(next){const img=new Image();img.src=next.src;}
 }
 function changePhoto(delta){if(!activePhoto)return;const{album,photo}=activePhoto;const next=album.photos[album.photos.indexOf(photo)+delta];if(next)navigate(`#photo/${album.id}/${next.id}`);}
@@ -76,8 +84,14 @@ function showExhibit(id){const entry=journey.find(x=>x.id===id);if(!entry){navig
 function showResume(){showPanel('THE LOBBY / RÉSUMÉ',`<div class="panel-content"><p class="eyebrow">PRODUCT ENGINEER · SINGAPORE</p><h2 id="panel-title">Reuben Teng</h2><p>${intro}</p>${journey.map(e=>`<section class="resume-entry">${entryMarkup(e)}</section>`).join('')}<section class="resume-entry"><p class="eyebrow">2025</p><h3>${certification}</h3></section><h3>The toolkit</h3>${skillMarkup()}<h3>Off the clock</h3><p>Bouldering, dodgeball, photography, and music.</p><div class="panel-actions">${button('museum','Explore the photo museum ↗','primary-button')}</div></div>`);}
 function showHelp(){showPanel('A FEW POINTERS',`<div class="panel-content"><p class="eyebrow">NO HIGH SCORES. JUST GOOD COMPANY.</p><h2 id="panel-title">Take the scenic route.</h2><p>This is a little world to wander through. Start with the journey in the lobby, then follow the door to the photographs.</p><div class="help-rows"><div><strong>Move around</strong><span>Click the floor, or focus the museum and use WASD / arrow keys. On a phone, use the directional pad.</span></div><div><strong>Take a closer look</strong><span>Click an exhibit, or walk nearby and press E / Enter. On a phone, tap A.</span></div><div><strong>The photo rooms</strong><span>Each room holds one collection. Open the booklet at the entrance to browse every photograph.</span></div><div><strong>Your own pace</strong><span>Use the guide to open any exhibit directly. Résumé and album views work without walking.</span></div><div><strong>Photo viewer</strong><span>Use the left / right arrows to browse. Escape returns to the booklet; Escape again closes it.</span></div></div><div class="panel-actions">${button('close','Let’s wander ↗','primary-button')}</div></div>`);}
 
-function route(){
+async function route(){
+  const version=++routeVersion;
   const pieces=location.hash.slice(1).split('/');const[type,id,detail]=pieces;const previousMap=worldRoute;
+  motion.reset();
+  if(dialog.open&&dialog.classList.contains('viewer')&&type!=='photo'){
+    await motion.leave(['lobby','museum','room',''].includes(type));
+    if(version!==routeVersion)return;
+  }
   if(['lobby','museum','room'].includes(type)||!type){
     closePanel();
     if(type==='room'){
