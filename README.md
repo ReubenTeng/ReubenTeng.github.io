@@ -110,3 +110,9 @@ Commit source, `photos/` (including optional album metadata), and `pnpm-lock.yam
 In **Settings → Pages → Build and deployment**, select **GitHub Actions** as the publishing source. The previous Angular site used `angular-cli-ghpages`; that branch-based deploy command is replaced by the root workflow. No secrets or third-party hosting are needed. See [GitHub’s custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 Local changes do not publish themselves. Commit and push to `main` to trigger deployment after configuring the publishing source.
+
+## Search visibility
+
+The page is optimized around the specific identity queries `Reuben Teng`, `Reuben Teng Singapore`, and `Reuben Teng product engineer`: the full name is in the title, primary heading, crawlable introduction, canonical URL, profile links, and Person/ProfilePage structured data. `robots.txt` and `sitemap.xml` are deployed with the site.
+
+Search ranking cannot be guaranteed for the single broad query `Reuben`, especially when that query has established celebrity results. After publishing, verify `reubenteng.github.io` in Google Search Console and submit `/sitemap.xml`. The highest-impact remaining work is earning consistent links that use the full name from LinkedIn, GitHub, Speedback, university or community profiles, and other sites that already know Reuben.

@@ -28,6 +28,6 @@ for (const album of albums) {
 }
 await writeFile(path.join(destination, 'albums.json'), JSON.stringify(albums, null, 2));
 await cp(path.join(root, 'src'), path.join(destination, 'src'), { recursive: true });
-for (const name of ['index.html', 'favicon.svg']) await cp(path.join(root, name), path.join(destination, name));
+for (const name of ['index.html', 'favicon.svg', 'robots.txt', 'sitemap.xml']) await cp(path.join(root, name), path.join(destination, name));
 await writeFile(path.join(destination, '.nojekyll'), '');
 console.log(`Built ${albums.length} albums and ${albums.reduce((sum, a) => sum + a.photos.length, 0)} photos → dist/`);

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://reubenteng.github.io/sitemap.xml

@@ -5,12 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f5ef">
   <meta name="description" content="Step into Reuben Teng’s little museum. Explore a product engineer’s journey, wander through his photography, and discover a few favourite corners of the internet.">
+  <meta name="author" content="Reuben Teng">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://reubenteng.github.io/">
   <meta property="og:title" content="Reuben Teng — A little museum">
   <meta property="og:description" content="A place for the things I build, the places I go, and the moments I keep.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://reubenteng.github.io/">
+  <meta property="og:site_name" content="Reuben Teng — A little museum">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Reuben Teng — A little museum">
+  <meta name="twitter:description" content="A walkable personal museum of engineering, photography, music, and curious side quests.">
+  <link rel="me" href="https://github.com/ReubenTeng">
+  <link rel="me" href="https://www.linkedin.com/in/reuben-teng/">
   <title>Reuben Teng — A little museum</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./src/style.css">
   <script type="module" src="./src/app.js"></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {"@type":"ProfilePage","@id":"https://reubenteng.github.io/#profile","url":"https://reubenteng.github.io/","name":"Reuben Teng — A little museum","mainEntity":{"@id":"https://reubenteng.github.io/#reuben-teng"}},
+        {"@type":"Person","@id":"https://reubenteng.github.io/#reuben-teng","name":"Reuben Teng","url":"https://reubenteng.github.io/","jobTitle":"Founding Product Engineer","worksFor":{"@type":"Organization","name":"Speedback"},"sameAs":["https://github.com/ReubenTeng","https://www.linkedin.com/in/reuben-teng/","https://www.instagram.com/reu.shoots"],"knowsAbout":["Product engineering","Healthcare technology","Photography","Bouldering","Music"]}
+      ]
+    }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#content">Skip to museum controls</a>
@@ -21,8 +41,8 @@
   </header>
   <main id="content">
     <section class="intro" aria-labelledby="page-title">
-      <div><p class="eyebrow"><span class="tiny-star">✳</span> A PERSONAL SPACE, MADE EXPLORABLE</p><h1 id="page-title">A little world.<br><em>A lot to discover.</em></h1></div>
-      <div class="intro-note"><p>I’m Reuben, a product engineer with a camera.<br>Welcome to a collection of things I build,<br class="desktop-break"> places I go, and moments I keep.</p><span class="hand-note">Make yourself at home. <span aria-hidden="true">↙</span></span></div>
+      <div><p class="eyebrow"><span class="tiny-star">✳</span> REUBEN TENG · A PERSONAL SPACE, MADE EXPLORABLE</p><h1 id="page-title">Reuben Teng’s<br><em>little world.</em></h1></div>
+      <div class="intro-note"><p>Reuben Teng is a Singapore-based product engineer with a camera.<br>Explore the things he builds, the places he visits,<br class="desktop-break"> and the moments he keeps.</p><span class="hand-note">Make yourself at home. <span aria-hidden="true">↙</span></span></div>
     </section>
     <section class="museum-shell" aria-label="Interactive museum">
       <div class="museum-topbar"><div class="location"><span class="location-icon" aria-hidden="true">⌖</span><span id="floor-label">GROUND FLOOR</span><span class="slash">/</span><strong id="room-label">The lobby</strong></div><div class="topbar-actions"><span class="live-dot"></span><span id="visit-count">YOUR VISIT STARTS HERE</span><button class="icon-button" data-action="help" aria-label="How to explore">?</button></div></div>
