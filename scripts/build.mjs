@@ -1,4 +1,4 @@
-import { mkdir, writeFile, cp, rm } from 'node:fs/promises';
+import { mkdir, writeFile, cp, rm, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { discoverAlbums } from './catalog.mjs';
@@ -29,5 +29,10 @@ for (const album of albums) {
 await writeFile(path.join(destination, 'albums.json'), JSON.stringify(albums, null, 2));
 await cp(path.join(root, 'src'), path.join(destination, 'src'), { recursive: true });
 for (const name of ['index.html', 'favicon.svg', 'robots.txt', 'sitemap.xml']) await cp(path.join(root, name), path.join(destination, name));
+// Google Search Console's URL-prefix verification uses a one-line HTML file at the site root.
+// Copy only Google's generated filename pattern so unrelated source files are not deployed.
+for (const name of await readdir(root)) {
+  if (/^google[a-z0-9_-]+\.html$/i.test(name)) await cp(path.join(root, name), path.join(destination, name));
+}
 await writeFile(path.join(destination, '.nojekyll'), '');
 console.log(`Built ${albums.length} albums and ${albums.reduce((sum, a) => sum + a.photos.length, 0)} photos → dist/`);
