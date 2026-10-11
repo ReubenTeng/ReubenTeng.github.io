@@ -61,9 +61,14 @@ export class Museum {
       add('links','The internet shelf',259,366,60,85,{type:'links'},{x:287,y:479});this.obstacles.push({x:259,y:398,w:60,h:53});
       add('telephone','Say hello · Contact me',650,267,78,77,{type:'contact'},{x:689,y:372});this.obstacles.push({x:650,y:300,w:78,h:44});
       add('interests','Outside of work',738,407,121,72,{type:'interests'},{x:770,y:510});this.obstacles.push({x:738,y:407,w:121,h:72});
+      add('bouldering','Enter the bouldering room',75,267,67,97,{type:'bouldering'},{x:164,y:330});
       add('museum','Enter the photo museum',873,245,74,126,{type:'museum'},{x:839,y:340});
       add('aws','AWS · Certified in 2025',778,273,57,56,{type:'certification'},{x:783,y:355});
       this.obstacles.push({x:414,y:257,w:169,h:35});
+    }else if(scene==='bouldering'){
+      add('climb','Climb the wall',255,100,490,305,{type:'climb'},{x:500,y:444});
+      this.obstacles.push({x:255,y:207,w:490,h:198});
+      add('lobby','Return to the lobby',445,555,110,52,{type:'lobby'},{x:500,y:545});
     }else if(scene==='museum'){
       const selected=this.albums.slice(section*3,section*3+3);
       selected.forEach((album,i)=>{const x=220+i*280;add(album.id,`Enter ${album.title}`,x-65,155,130,115,{type:'room',albumId:album.id},{x,y:304});add(`book-${album.id}`,`${album.title} · album booklet`,x-46,331,90,55,{type:'booklet',albumId:album.id},{x,y:415});this.obstacles.push({x:x-46,y:343,w:90,h:42});});
@@ -104,7 +109,7 @@ export class Museum {
     this.offsetY=(this.height-roomView.height*this.scale)/2-roomView.y*this.scale;
     c.translate(this.offsetX,this.offsetY);c.scale(this.scale,this.scale);c.imageSmoothingEnabled=false;
     this.drawRoom();
-    if(this.scene==='lobby')this.drawLobby();else if(this.scene==='museum')this.drawHall();else this.drawGallery();
+    if(this.scene==='lobby')this.drawLobby();else if(this.scene==='museum')this.drawHall();else if(this.scene==='bouldering')this.drawBouldering();else this.drawGallery();
     this.plant(96,217);this.plant(901,526);
     const glow=this.exhibits.find(e=>e.id===this.hover)||this.near;
     if(glow&&!this.paused){const p=glow.approach;const bob=this.reduced.matches?0:Math.sin(time/270)*2;this.text('⌄',p.x,p.y-41+bob,22,'#5c7750');}
@@ -151,6 +156,7 @@ export class Museum {
     this.internetShelf(259,366);
     this.telephone(650,267);
     this.turntable(745,410);this.plaque(793,481,'OFF THE CLOCK','A FEW OTHER OBSESSIONS');
+    this.door(78,278,55,78,'#b7835d');this.text('← BOULDERING',116,265,8);
     this.door(885,253,65,111,'#638776');this.rect(878,235,79,16,'#e8e6c9');this.text('MUSEUM →',917,247,8);this.text('PHOTOGRAPHS',906,382,7,'#7d8263');
     this.frame(783,274,47,46,'#b9ab71');this.text('AWS',806,299,10,'#f7f0d2');this.text('2025',806,338,8,'#877f60');
     this.plant(326,276);this.plant(680,414);this.plant(237,531,true);
@@ -186,6 +192,17 @@ export class Museum {
   turntable(x,y){this.shadow(x,y,111,64);this.rect(x,y+10,111,48,'#a2875c');this.rect(x+4,y+3,103,27,'#bfab7d');this.rect(x+5,y+32,101,16,'#8f7852');this.rect(x+12,y+37,62,6,'#756b4f');this.rect(x+83,y+35,14,10,'#c9bd90');this.rect(x+5,y+57,8,10,'#766a48');this.rect(x+95,y+57,8,10,'#766a48');const c=this.ctx;c.fillStyle='#445746';c.beginPath();c.ellipse(x+38,y+11,22,12,0,0,Math.PI*2);c.fill();c.fillStyle='#c7ac78';c.beginPath();c.ellipse(x+38,y+11,7,4,0,0,Math.PI*2);c.fill();this.rect(x+79,y-1,4,22,'#6a7657');this.rect(x+68,y+18,15,3,'#6a7657');this.rect(x+96,y-14,8,16,'#a4b885');}
   door(x,y,w,h,color){this.shadow(x,y,w,h);this.rect(x-6,y-6,w+12,h+12,'#b0a780');this.rect(x-3,y-3,w+6,h+6,'#e5debd');this.rect(x,y,w,h,color);this.rect(x+7,y+7,w-14,h-17,'#aac0a055');this.rect(x+w/2-2,y+6,4,h-9,'#d1d3a5');this.rect(x+7,y+h*.56,w-14,4,'#d1d3a5');this.rect(x+w/2-8,y+h*.64,3,7,'#e9db9e');this.rect(x+w/2+5,y+h*.64,3,7,'#e9db9e');this.rect(x-9,y+h+5,w+18,11,'#baa882');}
   book(x,y){this.shadow(x-30,y,60,35);this.rect(x-30,y,60,30,'#9d875e');this.rect(x-22,y-7,45,27,'#637e5b');this.rect(x-18,y-4,36,19,'#e8e4c4');this.rect(x,y-4,2,19,'#b8b898');this.rect(x-14,y,10,2,'#c7c6a5');this.rect(x+5,y,10,2,'#c7c6a5');this.rect(x-7,y+30,14,17,'#8d7d57');}
+  drawBouldering(){
+    this.rect(248,94,504,321,'#8e795b');this.rect(258,102,484,301,'#d9c8a6');
+    for(let y=117;y<395;y+=24)for(let x=272;x<735;x+=24)this.rect(x,y,2,2,'#b29d79');
+    for(let row=0;row<5;row++)for(let col=0;col<5;col++){const x=300+col*90+(row%2)*15,y=143+row*51;this.rect(x+2,y+4,18,11,'#8d7353');this.rect(x,y,18,11,['#b77850','#718a6c','#bca45f'][(row+col)%3]);this.rect(x+3,y+2,8,2,'#e6d7b5');}
+    this.rect(464,111,72,20,'#eed078');this.text('TOP OUT',500,125,9);
+    this.rug(246,416,508,103);this.text('THE FLOOR IS ALSO A VALID DESTINATION',500,493,10,'#e0e5ce');
+    this.plaque(500,350,'JUST ONE MORE TRY','CLICK THE WALL TO CLIMB');
+    this.bench(770,425);this.rect(805,405,23,22,'#f0e7cb');this.text('CHALK',816,401,7);
+    this.text('BOULDERING CLUB',500,546,12);this.text('← LOBBY',500,580,10);
+    this.text('NO EXPERIENCE.',165,390,9);this.text('NO DIGNITY.',165,407,9);
+  }
   drawHall(){
     this.text('MOMENTS, COLLECTED.',520,122,20,'#5d7252','center','Georgia');this.text('A ROOM FOR EVERY PLACE',520,143,8,'#8a9273');
     this.rug(366,430,300,110);

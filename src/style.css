@@ -72,3 +72,31 @@ dialog{border:1px solid #d9dfcb;border-radius:12px;padding:0;width:min(820px,cal
   .bookmark-card{padding:20px}
   .site-footer{gap:14px}
 }
+
+/* A wall-sized toy, in the museum's chalk, timber and sage palette. */
+.climbing-panel{width:min(900px,calc(100vw - 24px))}
+.climb-layout{display:grid;grid-template-columns:minmax(0,460px) minmax(240px,1fr)}
+.climb-wall{background:#d9c8a6;min-width:0}
+.climb-wall canvas{display:block;width:100%;aspect-ratio:460/650;touch-action:none;cursor:grab;outline-offset:-4px}
+.climb-wall canvas:active{cursor:grabbing}
+.climb-guide{padding:32px 26px;align-self:center}
+.climb-guide h2{font:normal 44px/.98 Georgia,serif;letter-spacing:-1.5px;margin:0 0 23px}
+.climb-guide>p{font-size:12px;line-height:1.8;color:#6b765f}
+.climb-guide .eyebrow{font:8px var(--mono);letter-spacing:1px}
+.limb-buttons{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:22px 0 12px}
+.limb-buttons button{padding:12px 5px;border:1px solid #b8c5a9;border-radius:4px;font:10px var(--mono)}
+.limb-buttons button[aria-pressed=true]{background:var(--green);color:white}
+.climb-guide .climb-keyboard{font-size:10px;color:#808b74}
+.climb-guide .climb-stats{font:10px var(--mono);border-top:1px solid var(--line);padding-top:20px;margin-top:22px}
+.climb-guide .climb-status{min-height:65px;color:var(--green);font:italic 17px/1.4 Georgia,serif}
+.climb-guide>.primary-button,.climb-guide>.secondary-button{width:100%;margin-top:10px;justify-content:center}
+@media(max-width:600px){
+  .climb-layout{grid-template-columns:1fr}
+  .climb-wall{display:flex;justify-content:center}
+  .climb-wall canvas{width:min(100%,340px)}
+  .climb-guide{padding:22px}
+  .climb-guide h2{font-size:32px}
+  .climb-guide h2 br{display:none}
+  .climb-guide .climb-status{min-height:0}
+  .site-header nav{flex-wrap:wrap;gap:8px 16px}
+}

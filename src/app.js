@@ -1,3 +1,4 @@
+import { mountBouldering } from './bouldering.js';
 import { Museum } from './game.js';
 import { photoMotion } from './photo-motion.js';
 import { intro, journey, skills, interests, certification, favouriteSites, photographyInstagram, contactLinks } from './content.js';
@@ -8,7 +9,7 @@ const attr = escapeHTML;
 let albums=[],loadError=false,worldRoute='#lobby',modalReturn='#lobby',activePhoto=null;
 const dialog=$('#panel');
 const motion=photoMotion(dialog);
-let routeVersion=0;
+let routeVersion=0,unmountClimb=null;
 let seen;
 try{const stored=JSON.parse(localStorage.getItem('rt-museum-visited')||'[]');seen=new Set(Array.isArray(stored)?stored.filter(x=>typeof x==='string'):[]);}catch{seen=new Set();}
 const totalPhotos=()=>albums.reduce((sum,a)=>sum+a.photos.length,0);
@@ -29,6 +30,7 @@ function skillMarkup(){return Object.entries(skills).map(([group,items])=>`<sect
 function entryMarkup(entry){return `<p class="eyebrow">${entry.date}</p><h3>${escapeHTML(entry.name)}</h3><p class="role">${escapeHTML(entry.role)}</p>${entry.description?`<p>${escapeHTML(entry.description)}</p>`:''}<ul>${entry.bullets.map(b=>`<li>${escapeHTML(b)}</li>`).join('')}</ul>`;}
 function button(action,label,style='secondary-button',extra=''){return `<button class="${style}" data-action="${action}" ${extra}>${label}</button>`;}
 function showPanel(kicker,body,viewer=false){
+  unmountClimb?.();unmountClimb=null;dialog.classList.remove('climbing-panel');
   const wasOpen=dialog.open,wasViewer=wasOpen&&dialog.classList.contains('viewer');
   motion.reset();
   museum.setPaused(true);dialog.classList.toggle('viewer',viewer);$('#panel-kicker').textContent=kicker;$('#panel-body').innerHTML=body;
@@ -36,7 +38,7 @@ function showPanel(kicker,body,viewer=false){
   $('#panel-title')?.setAttribute('tabindex','-1');$('#panel-title')?.focus({preventScroll:true});
   if(viewer&&!wasViewer)motion.open(!wasOpen);
 }
-function closePanel(){motion.reset();if(dialog.open){dialog.close();museum.setPaused(false);$('#world').focus({preventScroll:true});}activePhoto=null;}
+function closePanel(){unmountClimb?.();unmountClimb=null;dialog.classList.remove('climbing-panel');motion.reset();if(dialog.open){dialog.close();museum.setPaused(false);$('#world').focus({preventScroll:true});}activePhoto=null;}
 function closeToMap(){navigate(activePhoto?`#album/${activePhoto.album.id}`:modalReturn);}
 dialog.addEventListener('cancel',event=>{event.preventDefault();closeToMap();});
 dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeToMap();}});
@@ -44,18 +46,21 @@ dialog.addEventListener('keydown',event=>{if(activePhoto&&['ArrowLeft','ArrowRig
 
 function renderGuide(){
   const isLobby=museum.scene==='lobby';
-  $('#room-label').textContent=isLobby?'The lobby':museum.scene==='museum'?'The album hall':museum.album.title;
-  $('#floor-label').textContent=isLobby?'GROUND FLOOR':'PHOTO MUSEUM';
-  document.querySelectorAll('nav a').forEach(link=>link.classList.toggle('active',link.hash===(isLobby?'#lobby':'#museum')));
+  $('#room-label').textContent=isLobby?'The lobby':museum.scene==='museum'?'The album hall':museum.scene==='bouldering'?'The bouldering room':museum.album.title;
+  $('#floor-label').textContent=isLobby?'GROUND FLOOR':museum.scene==='bouldering'?'OFF THE CLOCK':'PHOTO MUSEUM';
+  document.querySelectorAll('nav a').forEach(link=>link.classList.toggle('active',link.hash===(isLobby?'#lobby':museum.scene==='bouldering'?'#bouldering':'#museum')));
   if(isLobby){$('#guide').innerHTML=`<p class="guide-eyebrow">A GOOD PLACE TO START</p><h2>Hello, I’m Reuben.</h2><p class="guide-intro">I build technology that makes a meaningful difference. Here’s a little of the journey so far.</p><p class="guide-subtitle">THE JOURNEY <span aria-hidden="true">↓</span></p><div class="journey-list">${journey.map(entry=>`<button class="journey-stop" data-action="exhibit" data-id="${entry.id}"><span class="stop-dot"></span><span><strong>${entry.label}</strong><small>${entry.short}${entry.id==='speedback'?' · BUILDING HEALTHCARE':''}</small></span><span class="arrow">↗</span></button>`).join('')}</div><div class="side-links">${button('skills','⌘ &nbsp; The toolkit','')}${button('interests','♫ &nbsp; Off the clock','')}${button('certification','AWS · 2025','')}</div>${button('museum',`Into the photo museum ${iconArrow}`,'primary-button')}<p class="guide-footnote">${albums.length} ALBUMS · ${totalPhotos()} LITTLE MOMENTS</p>`;}
+  else if(museum.scene==='bouldering'){
+    $('#guide').innerHTML=`<p class="guide-eyebrow">OFF THE CLOCK / BOULDERING CLUB</p><h2>All limbs.<br>No coordination.</h2><p class="guide-intro">A little climbing problem. A much bigger dignity problem.</p><p class="guide-subtitle">THE VERY LOOSE PLAN</p><p class="guide-intro">Drag a hand or foot onto a hold. Move your feet up to reach higher. Keep at least one hand attached, or meet the mat.</p><p class="guide-intro">Get both hands onto the gold hold at the top. Any resemblance to actual technique is accidental.</p>${button('climb','Give it a questionable go ↗','primary-button')}${button('lobby','← Back to the lobby','guide-footnote')}`;
+  }
   else if(museum.scene==='museum'){
     $('#guide').innerHTML=`<p class="guide-eyebrow">THE ART OF NOTICING</p><h2>Moments, collected.</h2><p class="guide-intro">Some places stay with you. Step into a room, or pick up a booklet and see where it takes you.</p><p class="guide-subtitle">CHOOSE A PLACE</p><div class="room-list">${albums.map(a=>{const cover=coverOf(a);return `<button class="room-link" data-action="room" data-id="${attr(a.id)}">${cover?`<img src="${attr(cover.thumbnail)}" alt="">`:''}<span><strong>${escapeHTML(a.title)}</strong><small>${a.photos.length} PHOTOGRAPHS</small></span><span>↗</span></button>`;}).join('')}</div>${albums.length>3?`<div class="section-controls"><button data-action="hallSection" data-section="${museum.section-1}" ${museum.section===0?'disabled':''} aria-label="Previous hall section">←</button><span>HALL ${museum.section+1} / ${Math.ceil(albums.length/3)}</span><button data-action="hallSection" data-section="${museum.section+1}" ${(museum.section+1)*3>=albums.length?'disabled':''} aria-label="Next hall section">→</button></div>`:''}${button('albums',`Browse all albums ${iconArrow}`,'primary-button')}${button('lobby','← Back to the lobby','guide-footnote')}`;
   }else{
     const a=museum.album,cover=coverOf(a),count=a.photos.filter(p=>seen.has(photoKey(a,p))).length;
     $('#guide').innerHTML=`<p class="guide-eyebrow">A PLACE, REMEMBERED</p><h2>${escapeHTML(a.title)}</h2><p class="guide-intro">${escapeHTML(a.description)}</p>${cover?`<img class="guide-photo" src="${attr(cover.thumbnail)}" alt="${attr(cover.alt)}">`:''}<p class="guide-subtitle">${count} OF ${a.photos.length} MOMENTS DISCOVERED</p><p class="guide-intro">Walk up to a frame to take a closer look. The booklet keeps the whole collection in one place.</p>${a.photos.length>6?`<div class="section-controls"><button data-action="section" data-section="${museum.section-1}" ${museum.section===0?'disabled':''} aria-label="Previous gallery section">←</button><span>ROOM ${museum.section+1} / ${Math.ceil(a.photos.length/6)}</span><button data-action="section" data-section="${museum.section+1}" ${(museum.section+1)*6>=a.photos.length?'disabled':''} aria-label="Next gallery section">→</button></div>`:''}${button('booklet',`Open the album booklet ${iconArrow}`,'primary-button',`data-id="${attr(a.id)}"`)}<p class="guide-footnote">${button('museum','← Back to the album hall','')}</p>`;
   }
-  if(isLobby)$('#guide .side-links').insertAdjacentHTML('beforeend',button('links','↗ Internet shelf','')+button('contact','☎ Say hello',''));
-  else $('#guide').insertAdjacentHTML('beforeend',instagramLink());
+  if(isLobby)$('#guide .side-links').insertAdjacentHTML('beforeend',button('bouldering','↟ Bouldering room','')+button('links','↗ Internet shelf','')+button('contact','☎ Say hello',''));
+  else if(museum.scene!=='bouldering') $('#guide').insertAdjacentHTML('beforeend',instagramLink());
 }
 
 function showContact(){
@@ -84,17 +89,22 @@ function showExhibit(id){const entry=journey.find(x=>x.id===id);if(!entry){navig
 function showResume(){showPanel('THE LOBBY / RÉSUMÉ',`<div class="panel-content"><p class="eyebrow">PRODUCT ENGINEER · SINGAPORE</p><h2 id="panel-title">Reuben Teng</h2><p>${intro}</p>${journey.map(e=>`<section class="resume-entry">${entryMarkup(e)}</section>`).join('')}<section class="resume-entry"><p class="eyebrow">2025</p><h3>${certification}</h3></section><h3>The toolkit</h3>${skillMarkup()}<h3>Off the clock</h3><p>Bouldering, dodgeball, photography, and music.</p><div class="panel-actions">${button('museum','Explore the photo museum ↗','primary-button')}</div></div>`);}
 function showHelp(){showPanel('A FEW POINTERS',`<div class="panel-content"><p class="eyebrow">NO HIGH SCORES. JUST GOOD COMPANY.</p><h2 id="panel-title">Take the scenic route.</h2><p>This is a little world to wander through. Start with the journey in the lobby, then follow the door to the photographs.</p><div class="help-rows"><div><strong>Move around</strong><span>Click the floor, or focus the museum and use WASD / arrow keys. On a phone, use the directional pad.</span></div><div><strong>Take a closer look</strong><span>Click an exhibit, or walk nearby and press E / Enter. On a phone, tap A.</span></div><div><strong>The photo rooms</strong><span>Each room holds one collection. Open the booklet at the entrance to browse every photograph.</span></div><div><strong>Your own pace</strong><span>Use the guide to open any exhibit directly. Résumé and album views work without walking.</span></div><div><strong>Photo viewer</strong><span>Use the left / right arrows to browse. Escape returns to the booklet; Escape again closes it.</span></div></div><div class="panel-actions">${button('close','Let’s wander ↗','primary-button')}</div></div>`);}
 
+function showClimb(){
+  showPanel('THE BOULDERING ROOM / JUST ONE MORE TRY',`<div class="climb-layout"><div class="climb-wall"><canvas tabindex="0" aria-label="Bouldering game. Select hands with Q and W, feet with O and P. Arrow keys move the selected limb. Enter grabs a hold. R restarts. You can also drag limbs or select a limb button and tap a hold." aria-describedby="climb-instructions"></canvas></div><div class="climb-guide"><p class="eyebrow">V0 / EMOTIONALLY V9</p><h2 id="panel-title">Hold on.<br>Probably.</h2><p id="climb-instructions">Drag hands and feet onto the lit-up holds. Bring your feet up, then reach higher. Both hands on gold = glory.</p><p>Keep one hand attached. The mat is very patient.</p><div class="limb-buttons" aria-label="Select a limb">${['Q · Left hand','W · Right hand','O · Left foot','P · Right foot'].map((name,i)=>`<button data-limb="${i}" aria-pressed="false">${name}</button>`).join('')}</div><p class="climb-keyboard">Or select a limb, then tap a hold.<br>Keyboard: Q W O P · arrows · Enter</p><p class="climb-stats" data-climb-stats></p><p class="climb-status" role="status" aria-live="polite"></p><button class="primary-button" data-climb-reset>↺ Try again</button><button class="secondary-button" data-action="bouldering">Back to the room</button></div></div>`);
+  dialog.classList.add('climbing-panel');unmountClimb=mountBouldering($('#panel-body'));$('#panel-body canvas').focus({preventScroll:true});
+}
 async function route(){
   const version=++routeVersion;
   const pieces=location.hash.slice(1).split('/');const[type,id,detail]=pieces;const previousMap=worldRoute;
   motion.reset();
   if(dialog.open&&dialog.classList.contains('viewer')&&type!=='photo'){
-    await motion.leave(['lobby','museum','room',''].includes(type));
+    await motion.leave(['lobby','museum','room','bouldering',''].includes(type));
     if(version!==routeVersion)return;
   }
-  if(['lobby','museum','room'].includes(type)||!type){
+  if(['lobby','museum','room','bouldering'].includes(type)||!type){
     closePanel();
-    if(type==='room'){
+    if(type==='bouldering'){if(museum.scene!=='bouldering')museum.configure('bouldering');worldRoute='#bouldering';}
+    else if(type==='room'){
       const album=albumById(id);if(!album){navigate('#museum');return;}
       const section=Math.min(Math.max(0,parseInt(detail,10)||0),Math.max(0,Math.ceil(album.photos.length/6)-1));
       if(museum.scene!=='room'||museum.album?.id!==id||museum.section!==section)museum.configure('room',album,section);
@@ -107,6 +117,7 @@ async function route(){
     modalReturn=worldRoute;renderGuide();return;
   }
   modalReturn=previousMap;activePhoto=null;
+  if(type==='climb'){if(museum.scene!=='bouldering'){museum.configure('bouldering');renderGuide();}worldRoute='#bouldering';modalReturn='#bouldering';showClimb();return;}
   if(type==='albums'){showAlbums();return;}
   if(type==='links'){showLinks();return;}
   if(type==='contact'){showContact();return;}
@@ -118,7 +129,7 @@ async function route(){
   if(type==='resume')showResume();
   else if(type==='exhibit')showExhibit(id);
   else if(type==='skills')showPanel('THE LOBBY / THE TOOLKIT',`<div class="panel-content"><p class="eyebrow">TOOLS FOR TURNING IDEAS INTO THINGS</p><h2 id="panel-title">The toolkit.</h2><p>From the interface to the infrastructure, and everything in between.</p>${skillMarkup()}</div>`);
-  else if(type==='interests')showPanel('THE LOBBY / OFF THE CLOCK',`<div class="panel-content"><p class="eyebrow">THERE’S MORE TO LIFE THAN A TERMINAL</p><h2 id="panel-title">A few other obsessions.</h2><div class="interest-grid">${interests.map(i=>`<article class="interest-card"><span aria-hidden="true">${i.icon}</span><h3>${i.name}</h3><p>${i.text}</p></article>`).join('')}</div><div class="panel-actions">${button('museum','See what’s on the camera ↗','primary-button')}</div></div>`);
+  else if(type==='interests')showPanel('THE LOBBY / OFF THE CLOCK',`<div class="panel-content"><p class="eyebrow">THERE’S MORE TO LIFE THAN A TERMINAL</p><h2 id="panel-title">A few other obsessions.</h2><div class="interest-grid">${interests.map(i=>`<article class="interest-card"><span aria-hidden="true">${i.icon}</span><h3>${i.name}</h3><p>${i.text}</p></article>`).join('')}</div><div class="panel-actions">${button('bouldering','Try the bouldering wall ↗','primary-button')}${button('museum','See what’s on the camera ↗')}</div></div>`);
   else if(type==='certification')showPanel('THE LOBBY / A MILESTONE',`<div class="panel-content"><p class="eyebrow">CERTIFIED IN 2025</p><div class="welcome-symbol" aria-hidden="true">✳</div><h2 id="panel-title">${certification}</h2><p>A milestone in designing and building cloud infrastructure.</p>${button('skills','Explore the rest of the toolkit ↗')}</div>`);
   else if(type==='welcome')showPanel('THE LOBBY / SAY HELLO',`<div class="panel-content"><div class="welcome-symbol" aria-hidden="true">✳</div><p class="eyebrow">ENGINEER, PHOTOGRAPHER, CURIOUS HUMAN.</p><h2 id="panel-title">Hello, I’m Reuben.</h2><p>${intro}</p><p>This little museum brings together my engineering journey and the moments I’ve collected with my camera. Look around, pick up a booklet, or stay for a while.</p><div class="panel-actions">${button('resume','Get to know me','primary-button')}${button('museum','Take me to the photographs ↗')}</div></div>`);
   else if(type==='help')showHelp();else navigate('#lobby');
