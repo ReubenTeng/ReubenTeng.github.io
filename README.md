@@ -4,7 +4,7 @@ A walkable, Pokémon-inspired personal museum. The lobby tells Reuben’s engine
 
 The site builds from the repository root. The old Angular application has been removed; album originals live in `photos/`.
 
-The museum fills a wider desktop layout with a close view of the room, a compact introduction, and narrow outer margins. On phones, the camera follows the visitor. The lobby’s **Internet shelf** opens a collection of favourite sites, and **@reu.shoots** links to Reuben’s photography Instagram.
+The museum fills a wider desktop layout with a close view of the room, a compact introduction, and narrow outer margins. On phones, the camera follows the visitor. The lobby’s **Internet shelf** opens a collection of favourite sites, and **@reu.shoots** links to Reuben’s photography Instagram. The off-the-clock rooms include a floppy-limbed bouldering game and a music room with the original “Wii lobby after hours” soundtrack.
 
 ## Run locally
 
@@ -22,7 +22,13 @@ pnpm test
 pnpm build
 ```
 
-There are no browser runtime dependencies. Native JavaScript modules and Canvas render the world; HTML dialogs provide accessible content. Sharp is a build-only dependency for image resizing, rotation, and WebP conversion.
+There are no browser runtime dependencies. Native JavaScript modules and Canvas render the world; HTML dialogs provide accessible content. Sharp is a build-only dependency for image resizing, rotation, and WebP conversion. The music room synthesizes its loop with the Web Audio API, so it does not ship an audio file; the editor can export the current arrangement as a MIDI file.
+
+## Why images live here instead of in a bucket
+
+The photographs are kept in `photos/` and built into the static deployment because this site is a small, versioned portfolio rather than a user-upload platform. The source image, album metadata, generated thumbnails, and code change together in one pull request. That gives every image a reviewable history, makes a fresh clone reproducible, avoids credentials and runtime storage configuration, and keeps the deployed site portable across GitHub Pages or another static host. Git LFS keeps large originals manageable while the build emits smaller WebP derivatives for visitors.
+
+An object-storage bucket would be a better fit once images are uploaded by other people, change independently of code, need private access or signed URLs, or grow beyond what a Git repository and its CI build can comfortably handle. It would also add recurring storage and bandwidth cost, cache and invalidation rules, credentials, failure modes, and a second source of truth for album metadata. Keeping assets here means repository size, build time, and public visibility are the tradeoffs we accept for simple publishing and durable, inspectable content. The build deliberately strips metadata from generated files and never deploys the originals.
 
 ## Add or edit an album
 
@@ -76,13 +82,18 @@ Rooms show six photographs per section, with previous/next sections for larger a
 - `src/game.js`: artwork, controls, room layouts, and exhibit interactions.
 - `src/geometry.js`: collision, nearby exhibits, pathfinding, and gallery sections.
 - `src/app.js`: panels, booklets, hash navigation, and visited-photo state.
+- `src/music-score.js`: the original eight-bar arrangement, score validation, note editing helpers, and MIDI export.
+- `src/music.js`: the Web Audio synthesizer, loop scheduler, persistence, and compact background player.
+- `src/music-editor.js`: the accessible piano-roll editor, track controls, undo/redo, and local remix UI.
 - `scripts/images.mjs`: image conversion and actionable errors for missing LFS data or invalid images.
 
 ## Controls and accessibility
 
 Focus or click the museum, then use WASD / arrow keys to walk and E / Enter to interact. Click the floor to walk there, or click an exhibit directly. On phones, use the directional pad and A button. The guide opens every exhibit without game controls. Photos support previous/next buttons and left/right keys. Escape returns from a photo to its booklet, then to the room. Native dialogs contain keyboard focus. Photos open with a subtle fade and zoom, crossfade when browsing, and fade out when closing. The current image stays visible until the next image loads. Reduced-motion preferences disable these transitions, character bobbing, and animated prompts.
 
-Photo discovery progress stays in the visitor’s browser; the site works if storage is unavailable. Hash routes support shared album and photo links without a server-side router or a Pages 404 workaround.
+The music bar can play or pause the soundtrack and adjust its master volume. Open the music room from the lobby, choose a track, then click empty cells to add notes or drag existing notes across the piano roll. The editor includes tempo, swing, per-track mute and level, undo/redo, a reset to the original arrangement, and a standards-compatible `.mid` download. Audio starts after a user gesture because browsers block autoplay; muting the bar also prevents the automatic start.
+
+Photo discovery progress and music remixes stay in the visitor’s browser; the site works if storage is unavailable. Hash routes support shared album, photo, music-room, and editor links without a server-side router or a Pages 404 workaround. Browsers require a user gesture before audio can start, so the first ordinary click or key press starts the soundtrack when it has not been paused.
 
 The Internet shelf is accessible from its postcard stand in the lobby, the room guide, and the main navigation. Its links open in new tabs, keeping the museum visit in place. Edit `favouriteSites` in `src/content.js` to change the collection. The Instagram link also appears in the photo museum guide and site footer.
 

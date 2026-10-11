@@ -1,3 +1,5 @@
+import { MuseumMusic, installMusicBar } from './music.js';
+import { editorMarkup, mountMusicEditor } from './music-editor.js';
 import { mountBouldering } from './bouldering.js';
 import { Museum } from './game.js';
 import { photoMotion } from './photo-motion.js';
@@ -9,7 +11,9 @@ const attr = escapeHTML;
 let albums=[],loadError=false,worldRoute='#lobby',modalReturn='#lobby',activePhoto=null;
 const dialog=$('#panel');
 const motion=photoMotion(dialog);
-let routeVersion=0,unmountClimb=null;
+let routeVersion=0,unmountClimb=null,unmountMusic=null;
+const music=new MuseumMusic();
+installMusicBar(music,$('#music-bar'));
 let seen;
 try{const stored=JSON.parse(localStorage.getItem('rt-museum-visited')||'[]');seen=new Set(Array.isArray(stored)?stored.filter(x=>typeof x==='string'):[]);}catch{seen=new Set();}
 const totalPhotos=()=>albums.reduce((sum,a)=>sum+a.photos.length,0);
@@ -30,7 +34,7 @@ function skillMarkup(){return Object.entries(skills).map(([group,items])=>`<sect
 function entryMarkup(entry){return `<p class="eyebrow">${entry.date}</p><h3>${escapeHTML(entry.name)}</h3><p class="role">${escapeHTML(entry.role)}</p>${entry.description?`<p>${escapeHTML(entry.description)}</p>`:''}<ul>${entry.bullets.map(b=>`<li>${escapeHTML(b)}</li>`).join('')}</ul>`;}
 function button(action,label,style='secondary-button',extra=''){return `<button class="${style}" data-action="${action}" ${extra}>${label}</button>`;}
 function showPanel(kicker,body,viewer=false){
-  unmountClimb?.();unmountClimb=null;dialog.classList.remove('climbing-panel');
+  unmountClimb?.();unmountClimb=null;unmountMusic?.();unmountMusic=null;dialog.classList.remove('climbing-panel','music-panel');
   const wasOpen=dialog.open,wasViewer=wasOpen&&dialog.classList.contains('viewer');
   motion.reset();
   museum.setPaused(true);dialog.classList.toggle('viewer',viewer);$('#panel-kicker').textContent=kicker;$('#panel-body').innerHTML=body;
@@ -38,7 +42,7 @@ function showPanel(kicker,body,viewer=false){
   $('#panel-title')?.setAttribute('tabindex','-1');$('#panel-title')?.focus({preventScroll:true});
   if(viewer&&!wasViewer)motion.open(!wasOpen);
 }
-function closePanel(){unmountClimb?.();unmountClimb=null;dialog.classList.remove('climbing-panel');motion.reset();if(dialog.open){dialog.close();museum.setPaused(false);$('#world').focus({preventScroll:true});}activePhoto=null;}
+function closePanel(){unmountClimb?.();unmountClimb=null;unmountMusic?.();unmountMusic=null;dialog.classList.remove('climbing-panel','music-panel');motion.reset();if(dialog.open){dialog.close();museum.setPaused(false);$('#world').focus({preventScroll:true});}activePhoto=null;}
 function closeToMap(){navigate(activePhoto?`#album/${activePhoto.album.id}`:modalReturn);}
 dialog.addEventListener('cancel',event=>{event.preventDefault();closeToMap();});
 dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeToMap();}});
@@ -46,10 +50,13 @@ dialog.addEventListener('keydown',event=>{if(activePhoto&&['ArrowLeft','ArrowRig
 
 function renderGuide(){
   const isLobby=museum.scene==='lobby';
-  $('#room-label').textContent=isLobby?'The lobby':museum.scene==='museum'?'The album hall':museum.scene==='bouldering'?'The bouldering room':museum.album.title;
-  $('#floor-label').textContent=isLobby?'GROUND FLOOR':museum.scene==='bouldering'?'OFF THE CLOCK':'PHOTO MUSEUM';
-  document.querySelectorAll('nav a').forEach(link=>link.classList.toggle('active',link.hash===(isLobby?'#lobby':museum.scene==='bouldering'?'#bouldering':'#museum')));
+  $('#room-label').textContent=isLobby?'The lobby':museum.scene==='museum'?'The album hall':museum.scene==='bouldering'?'The bouldering room':museum.scene==='studio'?'The music room':museum.album.title;
+  $('#floor-label').textContent=isLobby?'GROUND FLOOR':['bouldering','studio'].includes(museum.scene)?'OFF THE CLOCK':'PHOTO MUSEUM';
+  document.querySelectorAll('nav a').forEach(link=>link.classList.toggle('active',link.hash===(isLobby?'#lobby':museum.scene==='bouldering'?'#bouldering':museum.scene==='studio'?'#studio':'#museum')));
   if(isLobby){$('#guide').innerHTML=`<p class="guide-eyebrow">A GOOD PLACE TO START</p><h2>Hello, I’m Reuben.</h2><p class="guide-intro">I build technology that makes a meaningful difference. Here’s a little of the journey so far.</p><p class="guide-subtitle">THE JOURNEY <span aria-hidden="true">↓</span></p><div class="journey-list">${journey.map(entry=>`<button class="journey-stop" data-action="exhibit" data-id="${entry.id}"><span class="stop-dot"></span><span><strong>${entry.label}</strong><small>${entry.short}${entry.id==='speedback'?' · BUILDING HEALTHCARE':''}</small></span><span class="arrow">↗</span></button>`).join('')}</div><div class="side-links">${button('skills','⌘ &nbsp; The toolkit','')}${button('interests','♫ &nbsp; Off the clock','')}${button('certification','AWS · 2025','')}</div>${button('museum',`Into the photo museum ${iconArrow}`,'primary-button')}<p class="guide-footnote">${albums.length} ALBUMS · ${totalPhotos()} LITTLE MOMENTS</p>`;}
+  else if(museum.scene==='studio'){
+    $('#guide').innerHTML=`<p class="guide-eyebrow">OFF THE CLOCK / THE MUSIC ROOM</p><h2>Lobby after hours.</h2><p class="guide-intro">The lights are low. The bass is bouncy. Someone has left the instruments unattended.</p><p class="guide-subtitle">YOU’RE ON THE AUX</p><p class="guide-intro">An original eight-bar groove: plucky keys, marimba, bass, and a drum machine with nowhere to be.</p><p class="guide-intro">Move some notes around. Change the tempo. Your remix follows you through every room.</p>${button('sequencer','Make a little noise ↗','primary-button')}<p class="guide-footnote">SAVED ON YOUR DEVICE · UNDO INCLUDED</p>${button('lobby','← Back to the lobby','guide-footnote')}`;
+  }
   else if(museum.scene==='bouldering'){
     $('#guide').innerHTML=`<p class="guide-eyebrow">OFF THE CLOCK / BOULDERING CLUB</p><h2>All limbs.<br>No coordination.</h2><p class="guide-intro">A little climbing problem. A much bigger dignity problem.</p><p class="guide-subtitle">THE VERY LOOSE PLAN</p><p class="guide-intro">Drag a hand or foot onto a hold. Move your feet up to reach higher. Keep at least one hand attached, or meet the mat.</p><p class="guide-intro">Get both hands onto the gold hold at the top. Any resemblance to actual technique is accidental.</p>${button('climb','Give it a questionable go ↗','primary-button')}${button('lobby','← Back to the lobby','guide-footnote')}`;
   }
@@ -59,8 +66,8 @@ function renderGuide(){
     const a=museum.album,cover=coverOf(a),count=a.photos.filter(p=>seen.has(photoKey(a,p))).length;
     $('#guide').innerHTML=`<p class="guide-eyebrow">A PLACE, REMEMBERED</p><h2>${escapeHTML(a.title)}</h2><p class="guide-intro">${escapeHTML(a.description)}</p>${cover?`<img class="guide-photo" src="${attr(cover.thumbnail)}" alt="${attr(cover.alt)}">`:''}<p class="guide-subtitle">${count} OF ${a.photos.length} MOMENTS DISCOVERED</p><p class="guide-intro">Walk up to a frame to take a closer look. The booklet keeps the whole collection in one place.</p>${a.photos.length>6?`<div class="section-controls"><button data-action="section" data-section="${museum.section-1}" ${museum.section===0?'disabled':''} aria-label="Previous gallery section">←</button><span>ROOM ${museum.section+1} / ${Math.ceil(a.photos.length/6)}</span><button data-action="section" data-section="${museum.section+1}" ${(museum.section+1)*6>=a.photos.length?'disabled':''} aria-label="Next gallery section">→</button></div>`:''}${button('booklet',`Open the album booklet ${iconArrow}`,'primary-button',`data-id="${attr(a.id)}"`)}<p class="guide-footnote">${button('museum','← Back to the album hall','')}</p>`;
   }
-  if(isLobby)$('#guide .side-links').insertAdjacentHTML('beforeend',button('bouldering','↟ Bouldering room','')+button('links','↗ Internet shelf','')+button('contact','☎ Say hello',''));
-  else if(museum.scene!=='bouldering') $('#guide').insertAdjacentHTML('beforeend',instagramLink());
+  if(isLobby)$('#guide .side-links').insertAdjacentHTML('beforeend',button('studio','♫ Music room','')+button('bouldering','↟ Bouldering room','')+button('links','↗ Internet shelf','')+button('contact','☎ Say hello',''));
+  else if(!['bouldering','studio'].includes(museum.scene)) $('#guide').insertAdjacentHTML('beforeend',instagramLink());
 }
 
 function showContact(){
@@ -93,17 +100,22 @@ function showClimb(){
   showPanel('THE BOULDERING ROOM / JUST ONE MORE TRY',`<div class="climb-layout"><div class="climb-wall"><canvas tabindex="0" aria-label="Bouldering game. Select hands with Q and W, feet with O and P. Arrow keys move the selected limb. Enter grabs a hold. R restarts. You can also drag limbs or select a limb button and tap a hold." aria-describedby="climb-instructions"></canvas></div><div class="climb-guide"><p class="eyebrow">V0 / EMOTIONALLY V9</p><h2 id="panel-title">Hold on.<br>Probably.</h2><p id="climb-instructions">Drag hands and feet onto the lit-up holds. Bring your feet up, then reach higher. Both hands on gold = glory.</p><p>Keep one hand attached. The mat is very patient.</p><div class="limb-buttons" aria-label="Select a limb">${['Q · Left hand','W · Right hand','O · Left foot','P · Right foot'].map((name,i)=>`<button data-limb="${i}" aria-pressed="false">${name}</button>`).join('')}</div><p class="climb-keyboard">Or select a limb, then tap a hold.<br>Keyboard: Q W O P · arrows · Enter</p><p class="climb-stats" data-climb-stats></p><p class="climb-status" role="status" aria-live="polite"></p><button class="primary-button" data-climb-reset>↺ Try again</button><button class="secondary-button" data-action="bouldering">Back to the room</button></div></div>`);
   dialog.classList.add('climbing-panel');unmountClimb=mountBouldering($('#panel-body'));$('#panel-body canvas').focus({preventScroll:true});
 }
+function showSequencer(){
+  showPanel('THE MUSIC ROOM / YOUR MUSEUM SOUNDTRACK',editorMarkup());
+  dialog.classList.add('music-panel');unmountMusic=mountMusicEditor($('#panel-body'),music);
+}
 async function route(){
   const version=++routeVersion;
   const pieces=location.hash.slice(1).split('/');const[type,id,detail]=pieces;const previousMap=worldRoute;
   motion.reset();
   if(dialog.open&&dialog.classList.contains('viewer')&&type!=='photo'){
-    await motion.leave(['lobby','museum','room','bouldering',''].includes(type));
+    await motion.leave(['lobby','museum','room','bouldering','studio',''].includes(type));
     if(version!==routeVersion)return;
   }
-  if(['lobby','museum','room','bouldering'].includes(type)||!type){
+  if(['lobby','museum','room','bouldering','studio'].includes(type)||!type){
     closePanel();
-    if(type==='bouldering'){if(museum.scene!=='bouldering')museum.configure('bouldering');worldRoute='#bouldering';}
+    if(type==='studio'){if(museum.scene!=='studio')museum.configure('studio');worldRoute='#studio';}
+    else if(type==='bouldering'){if(museum.scene!=='bouldering')museum.configure('bouldering');worldRoute='#bouldering';}
     else if(type==='room'){
       const album=albumById(id);if(!album){navigate('#museum');return;}
       const section=Math.min(Math.max(0,parseInt(detail,10)||0),Math.max(0,Math.ceil(album.photos.length/6)-1));
@@ -117,6 +129,7 @@ async function route(){
     modalReturn=worldRoute;renderGuide();return;
   }
   modalReturn=previousMap;activePhoto=null;
+  if(type==='sequencer'){if(museum.scene!=='studio'){museum.configure('studio');renderGuide();}worldRoute='#studio';modalReturn='#studio';showSequencer();return;}
   if(type==='climb'){if(museum.scene!=='bouldering'){museum.configure('bouldering');renderGuide();}worldRoute='#bouldering';modalReturn='#bouldering';showClimb();return;}
   if(type==='albums'){showAlbums();return;}
   if(type==='links'){showLinks();return;}
